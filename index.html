@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora de Liberdade Financeira · Método Travessia</title>
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://api.leticiakratka.com.br/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-N9GCCZSW');</script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #F5F5F7;
+    min-height: 100vh;
+  }
+
+  /* Header claro em tom areia/dourado — diferente do branco puro do Quiz,
+     sem precisar inverter as cores da logo (ela já tem fundo transparente). */
+  .header-light {
+    background: linear-gradient(135deg, #FBF6E9 0%, #F5EBCF 100%);
+    padding: 40px 24px 40px;
+    text-align: center;
+    border-bottom: 3px solid #D9B44A;
+  }
+  .header-logo { height: 48px; width: auto; display: block; margin: 0 auto 18px; }
+  .header-tag-light {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    color: #CDEFDD;
+    background: #16321F;
+    padding: 5px 12px 5px 10px;
+    border-radius: 999px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .header-tag-light::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #4ADE80;
+  }
+  .header-title-light {
+    font-size: 27px;
+    font-weight: 800;
+    color: #1C1C1E;
+    letter-spacing: -0.02em;
+    line-height: 1.28;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .header-title-accent-gold { color: #A8802C; }
+  .header-sub-light {
+    font-size: 14.5px;
+    color: #5B5B5E;
+    margin: 12px auto 0;
+    max-width: 440px;
+    line-height: 1.55;
+  }
+  .header-sub-light strong { color: #1C1C1E; }
+
+  /* Main */
+  .main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 28px 24px 80px;
+  }
+
+  .card {
+    background: #fff;
+    border-radius: 16px;
+    border: 1px solid #E8E8E8;
+    padding: 40px;
+    width: 100%;
+    max-width: 640px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+  }
+  .card + .card { margin-top: 20px; }
+
+  .form-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #8E8E93;
+    margin: 0 0 4px;
+  }
+  .form-section-title {
+    font-size: 19px;
+    font-weight: 700;
+    color: #1C1C1E;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+
+  h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #1C1C1E;
+    line-height: 1.35;
+    margin-bottom: 8px;
+  }
+
+  .question-hint {
+    font-size: 14px;
+    color: #6C6C70;
+    margin-bottom: 24px;
+    line-height: 1.5;
+  }
+
+  /* Input fields */
+  .field { margin-bottom: 20px; }
+  .field label {
+    display: block;
+    font-size: 13px;
+    font-weight: 500;
+    color: #1C1C1E;
+    margin-bottom: 8px;
+  }
+  .field-sub {
+    font-size: 12px;
+    color: #8E8E93;
+    margin-top: 6px;
+  }
+  .field input, .field select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1.5px solid #E8E8E8;
+    border-radius: 10px;
+    font-size: 15px;
+    color: #1C1C1E;
+    background: #FAFAFA;
+    transition: border-color 0.2s;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .field input:focus, .field select:focus {
+    border-color: #1C1C1E;
+    background: #fff;
+  }
+  .field input::placeholder { color: #AEAEB2; }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+
+  /* Botões */
+  .btn {
+    padding: 13px 28px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+  }
+  .btn-back {
+    background: #F5F5F7;
+    color: #1C1C1E;
+    border: 1.5px solid #E8E8E8;
+    padding: 13px 20px;
+  }
+  .btn-back:hover { background: #E8E8E8; }
+
+  .btn-row { display: flex; gap: 12px; margin-top: 30px; }
+
+  .btn-cta-calc {
+    display: block;
+    width: 100%;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 17px 28px;
+    background: #1A8754;
+    color: #fff;
+    box-shadow: 0 8px 20px rgba(26,135,84,0.3);
+    margin-top: 30px;
+  }
+  .btn-cta-calc:hover { background: #14a368; }
+  .btn-cta-calc:disabled { opacity: 0.7; cursor: default; }
+  .btn-row .btn-cta-calc { margin-top: 0; flex: 1; }
+
+  /* Capa inicial */
+  @keyframes introFadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  #intro-step { animation: introFadeInUp 0.5s ease-out; }
+  @media (prefers-reduced-motion: reduce) {
+    #intro-step { animation: none; }
+  }
+
+  .intro-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #E9F9F0;
+    color: #1A8754;
+    border: 1px solid #CDEFDD;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 18px;
+  }
+
+  .intro-headline {
+    font-size: 27px;
+    font-weight: 800;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    margin-bottom: 10px;
+  }
+
+  .intro-preview {
+    margin: 26px 0;
+    padding: 18px;
+    background: #FAFAFA;
+    border: 1px solid #E8E8E8;
+    border-radius: 14px;
+    display: flex;
+    gap: 12px;
+  }
+  .intro-scenario {
+    flex: 1;
+    text-align: center;
+    padding: 14px 10px;
+    border-radius: 10px;
+  }
+  .intro-scenario-atual { background: #F0F0F2; }
+  .intro-scenario-metodo { background: #E9F9F0; }
+  .intro-scenario-emoji { font-size: 22px; margin-bottom: 6px; }
+  .intro-scenario-title { font-size: 12.5px; font-weight: 700; color: #1C1C1E; }
+  .intro-scenario-sub { font-size: 11px; color: #6C6C70; margin-top: 2px; }
+
+  .intro-steps {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 4px;
+    margin: 28px 0 8px;
+  }
+  .intro-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    text-align: center;
+  }
+  .intro-step-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #F0FBF5;
+    border: 1.5px solid #CDEFDD;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+  }
+  .intro-step-text {
+    font-size: 11.5px;
+    font-weight: 600;
+    color: #3A3A3C;
+    line-height: 1.3;
+  }
+  .intro-step-arrow {
+    color: #C7C7CC;
+    font-size: 16px;
+    flex-shrink: 0;
+    padding-top: 10px;
+  }
+
+  .intro-microcopy {
+    text-align: center;
+    font-size: 12.5px;
+    color: #8E8E93;
+    margin-top: 12px;
+  }
+
+  @media (max-width: 640px) {
+    .intro-preview { flex-direction: column; }
+  }
+
+  .form-microcopy {
+    text-align: center;
+    font-size: 12.5px;
+    color: #8E8E93;
+    margin-top: 12px;
+  }
+
+  /* Resultado */
+  .resultado-sticky-params {
+    background: #fff;
+    border: 1.5px solid #E8E8E8;
+    border-radius: 14px;
+    padding: 18px;
+    margin-bottom: 28px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+  }
+  .resultado-sticky-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #8E8E93;
+    margin-bottom: 12px;
+  }
+  .resultado-sticky-fields {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .resultado-sticky-fields label {
+    display: block;
+    font-size: 11px;
+    color: #6C6C70;
+    margin-bottom: 4px;
+  }
+  .resultado-sticky-fields input {
+    width: 100%;
+    padding: 9px 10px;
+    border: 1.5px solid #E8E8E8;
+    border-radius: 8px;
+    font-size: 13.5px;
+    color: #1C1C1E;
+    background: #FAFAFA;
+    outline: none;
+  }
+  .resultado-sticky-fields input:focus { border-color: #1C1C1E; background: #fff; }
+  .btn-recalcular { margin-top: 4px; padding: 12px; font-size: 14px; }
+
+  .explicacao-resultado { margin-bottom: 24px; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .stat-card {
+    background: #FAFAFA;
+    border: 1px solid #E8E8E8;
+    border-radius: 12px;
+    padding: 16px 12px;
+    text-align: center;
+  }
+  .stat-card-icon { font-size: 20px; margin-bottom: 6px; }
+  .stat-card-label {
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #8E8E93;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .stat-card-value { font-size: 15.5px; font-weight: 800; color: #1C1C1E; line-height: 1.3; }
+  .stat-card-value.accent { color: #1A8754; }
+  @media (max-width: 640px) {
+    .stats-grid { grid-template-columns: 1fr; }
+  }
+
+  .explicacao-nota {
+    background: #F5F5F7;
+    border-radius: 12px;
+    padding: 16px 18px;
+    font-size: 14px;
+    color: #3A3A3C;
+    line-height: 1.6;
+  }
+  .explicacao-nota strong { color: #1C1C1E; }
+
+  .cta-context {
+    font-size: 14.5px;
+    color: #3A3A3C;
+    line-height: 1.6;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .result-header { text-align: center; margin-bottom: 24px; }
+  .result-badge {
+    display: inline-block;
+    background: #F5F5F7;
+    border: 1.5px solid #E8E8E8;
+    border-radius: 30px;
+    padding: 6px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #6C6C70;
+    margin-bottom: 16px;
+  }
+  .result-header h2 { font-size: 22px; margin-bottom: 4px; }
+  .result-summary {
+    font-size: 15px;
+    color: #3A3A3C;
+    line-height: 1.5;
+    margin-top: 6px;
+  }
+
+  /* Hero: resultado principal */
+  .hero-antecipa {
+    text-align: center;
+    background: linear-gradient(135deg, #FBF6E9, #F5EBCF);
+    border: 1.5px solid #E9D9A0;
+    border-radius: 16px;
+    padding: 24px 20px;
+    margin-bottom: 24px;
+  }
+  .hero-antecipa-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1C1C1E;
+    margin-bottom: 4px;
+  }
+  .hero-antecipa-label strong { color: #A8802C; font-weight: 800; }
+  .hero-antecipa-value {
+    font-size: 38px;
+    font-weight: 800;
+    color: #A8802C;
+    letter-spacing: -0.02em;
+    line-height: 1.2;
+  }
+  .hero-antecipa-sub {
+    font-size: 12.5px;
+    color: #6C6C70;
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+  .hero-antecipa-disclaimer {
+    font-size: 11.5px;
+    color: #8E8E93;
+    margin-top: 12px;
+    line-height: 1.5;
+    border-top: 1px dashed #E9D9A0;
+    padding-top: 10px;
+  }
+
+  .chart-legend-note {
+    font-size: 12.5px;
+    color: #6C6C70;
+    line-height: 1.5;
+    text-align: center;
+    margin: 4px 0 20px;
+  }
+
+  .chart-wrap {
+    background: #FAFAFA;
+    border: 1px solid #E8E8E8;
+    border-radius: 14px;
+    padding: 18px 14px 8px;
+    margin-bottom: 20px;
+  }
+  .chart-wrap canvas { max-width: 100%; }
+
+  .assumptions-note {
+    font-size: 11.5px;
+    color: #8E8E93;
+    line-height: 1.5;
+    margin: 14px 0 22px;
+    text-align: center;
+  }
+
+  /* Diagnóstico automático — em blocos separados, com negrito nos pontos-chave */
+  .section-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #1C1C1E;
+    margin: 4px 0 14px;
+  }
+  .diagnostico-box { margin-bottom: 24px; }
+  .diagnostico-block {
+    background: #FAFAFA;
+    border: 1px solid #E8E8E8;
+    border-radius: 12px;
+    padding: 16px 18px;
+  }
+  .diagnostico-block + .diagnostico-block { margin-top: 10px; }
+  .diagnostico-block-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #A8802C;
+    margin-bottom: 6px;
+  }
+  .diagnostico-block p {
+    font-size: 14px;
+    color: #3A3A3C;
+    line-height: 1.6;
+  }
+  .diagnostico-block strong { color: #1C1C1E; }
+
+  .proof-card {
+    background: #F7EFFC;
+    border-left: 4px solid #AF52DE;
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+  }
+  .proof-card .result-card-label { color: #AF52DE; }
+  .result-card-label {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .proof-card p { font-size: 14.5px; color: #1C1C1E; line-height: 1.6; }
+
+  .cta-lead-in {
+    text-align: center;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: #1C1C1E;
+    margin: 18px 0 12px;
+  }
+
+  .next-action {
+    background: linear-gradient(135deg, #1C1C1E, #2C2C2E);
+    color: #fff;
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-top: 4px;
+  }
+  .next-action p { font-size: 12px; color: #7AE0AC; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+  .next-action strong { font-size: 16px; color: #fff; line-height: 1.5; display: block; margin-bottom: 18px; }
+  .btn-calendar {
+    display: block;
+    background: #1A8754;
+    color: #fff;
+    border-radius: 10px;
+    padding: 15px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 700;
+    box-shadow: 0 8px 20px rgba(26, 135, 84, 0.35);
+    transition: background 0.2s, transform 0.15s;
+  }
+  .btn-calendar:hover { background: #14a368; transform: translateY(-1px); }
+
+  /* Erro */
+  .error-msg { display: none; font-size: 13px; color: #FF3B30; margin-top: 12px; }
+  .error-msg.show { display: block; }
+
+  @media (max-width: 640px) {
+    .header-light { padding: 32px 20px 32px; }
+    .header-title-light { font-size: 22px; }
+    .card { padding: 26px 20px; }
+    .main { padding: 20px 16px 60px; }
+    h2 { font-size: 17px; }
+    .field-row { grid-template-columns: 1fr; gap: 0; }
+    .hero-antecipa-value { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+<noscript><iframe src="https://api.leticiakratka.com.br/ns.html?id=GTM-N9GCCZSW"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+<div class="header-light">
+  <img class="header-logo" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAzgAAADqCAYAAABukuA7AAAAAXNSR0IArs4c6QAAAIRlWElmTU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAzigAwAEAAAAAQAAAOoAAAAA5970CwAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDYuMC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KGV7hBwAAPHtJREFUeAHtnU+y5EaSn4dtvZQZMTvtCjpB5Q2I2WlXqRMw5gTMPgHBEzB5ggZP0MkTDGqnhcwmudNO4E67QZtMKy2on7MfSFRUAIjEf2R+buYEwsPD/3xAZiJevlf8p39CIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQjsjsAXu6uIgiAAAQg8F4FE7Vyeq6XR3fznt5X/XcdidBQWQgACEIAABCAAAQhAAAKbEsiUvZb+iv7G4H+IAwIBCEAAAhBYhADf4CyClaAQgAAEPiOQynKTvv9s5vUMttn754O0fVKdidRqvh+kZsqEAAQgAAEIQAACEIDAagSuyvTq3+T8x2q0pyVyrWtVTgvFaghAAAIQgAAEIAABCDwvgbNas28E/I1OKVsifUaxTU3T7xE2OK5Vr9VdShEIQAACEIAABCAAAQhAoINAKvtd2jz0N0fb+GTSZ5MjbXCc4DfXoznenu2C0A8EIAABCEAAAhCAAATmJmDf1hTS5iG6fcxlfyY5ygbHCXr7Oti5bUTtWiEQgAAEIAABCEAAAhCAQAQBJ59a6j9Yl7I9y4P1ETY4LnAN2NwICgIBCEAAAhCAAAQgAIFHCZy0wB6m/U1OLZvNHV32vsFxAuyzt+uRHB089UMAAhCAAAQgAAEIQGArAvYwXUj9B20bX6RHlj1vcJzA+szZ3Bz5bqN2CEAAAhCAAAQgAIFdEXCqxn/gtvFNapugI8peNzhOMH3WbG6OeIdRMwQgAAEIQAACEIDArgmcVF0l9R++zWZzR5M9bnCcIPp82dwc7c6iXghAAAIQgAAEIACBwxBIVOlN6j+E29hJjyR72+A4wfO5srk50h1FrRCAAAQgAAEIQAAChyVwUeX+w7iNC6ltgo4ge9rgOAHzebK5OcJdRI0QgAAEIAABCEAAAk9D4KROamnowdzm9i572eA4gQoxTPYOkPogAAEIQAACEIAABCDwbATsIbyU+g/otvFx0j3LHjY4ToB8dnfZ2Nzs+c6hNghAAAIQgAAEIACBpyeQq0P/Qd3GhXSvsvUGxwmMz4zNzV7vFuqCAAQgAAEIQAACEHg5Apk6tm9uQg/tqex7ky03OE4wQpz45mZvdwn1QAACEIAABCAAAQi8NAF7QLdvIfyHd9v4nHdGZqsNjgvwMWbJzvhQDgQgAAEIQAACEIAABCDwRuCqo7/JsbHZ9yJbbHCcmve5sLnZyx1BHRCAAAQgAAEIQAACEOghcNZcLQ090Kc969aaWnuD49RYiEWyVsPkgQAEIAABCEAAAhCAAASmEUi13L6h8B/sbeOTSbeUNTc4To36DIwLm5st7wByQwACEIAABCAAAQhAYCSBq9b5D/g2zkfGm2PZWhscp2L93tnczHEFiQEBCEAAAhCAAAQgAIENCTjlrqX+w34p2xbfZKyxwXGBftncCAoCAQhAAAIQgAAEIACBZyBwUhP2gO9vcmrZMumasvQGx6kZv082N2teYXJBAAIQgAAEIAABCEBgBQKJchRS/+HfxhfpWrLkBsepCb8/NjdrXVnyQAACEIAABCAAAQhAYAMCTjlrqb8RuMmWSJeWpTY4ToX7PbG5WfpqEh8CEIAABCAAAQhAAAI7IHBSDZXU3xCYzeaWlCU2OE4F+72wuVnyKhIbAhCAAAQgAAEIQAACOyOQqJ6b1N8Y2PiyYK1zb3BcoAc2NwteQEJDAAIQgAAEIAABCEBgzwRsMxPa5BSyJwsUPucGx6k+v3Y2NwtcNEJCAAIQgAAEIAABCEDgSAROKraShjYLNjenzLXBcSoqVO8Sm7I5+ycWBCAAAQhAAAIQgAAEILACAdsYlFJ/01DL5qRzyRwbHKdi/DrvsrG5mesqEQcCEIAABCAAAQhAAAJPQiBXH/7mwcaFdI4NxNQNjlMdfn1sbgQFgQAEIAABCEAAAhCAAATCBDKZa2loI3EKL4m2TtnguI6a5th4RTeAIwQgAAEIQAACEIAABCBwPAK2aSil/ibHNj5n6VgZu8FxSujXcpfN6kQgAAEIQAACEIAABCAAAQhEEcjl5W8sbHyNWv2505gNjlMYvwY2N5+zxQIBCEAAAhCAAAQgAAEIRBA4y6eWhjYZacT6tsujGxynxaG8STso5xCAAAQgAAEIQAACEIAABB4hkMrZvjXxNxu28TlLY+WRDY5TUD+f1ZDEJsMPAhCAAAQgAAEIQAACEIBAH4GrJv1Nh43zvkWtudgNjtMaPw+bmxZITiEAAQhAAAIQgAAEIACBeQicFaaW+huQUrZE2icxGxynAH5sNjd9VJmDAAQgAAEIQAACEIAABCYROGm1bTr8jUgtWybtkqENjtNCPyabmy6a2CEAAQhAAAIQgAAEIACB2QgkilRI/Q2JjXNpSPo2OE4L/FhsbkIUsUEAAhCAAAQgAAEIQAACixFwimzf3Pibk5tstglqS9cGx8nJX8/mpk2OcwhAAAIQgAAEIAABCEBgNQInZbINib9JqWSzuUZCGxynSX8dm5uGGEcIQAACEIAABCAAAQhAYBMCibLepP5mxcaXt4r8DY4L+LO5eYPFAQIQgAAEIAABCEAAAhDYnoBtZkKbHNv8/J/W3P9rnTf+bG4EBYEABCAAAQhAAAIQgAAE9kXgpHIqabNxiTmyudnXNaQaCEAAAhCAAAQgAAEIQKBFINH5TcrmpgWFUwhAAAIQgAAEIAABCEDg2AQuKr9vk8M3N8e+vlQPAQhAAAIQgAAEIACBlyOQqeP/Kw1tdGwOgQAEIAABCEAAAhCAAAQgcBgCTpWGNjdmq6U2j0AAAhCAAAQgAAEIQAACENg9AacKuzY3bft1951QIAQgAAEIQAACEIAABCDw0gScum9vYobO7e9xUikCAQhAAAIQgAAEIAABCEBgVwScqunb0Nj/E8c2NL6P/craWYpAAAIQgAAEIAABCEAAAhDYBQGnKvyNi21m2v+jz/94q/Qa8LW1ZkcgAAEIQAACEIAABCAAAQhsSsApe2hzk8hum5pmrtngyPTbNzZ1a67xuctm6xAIQAACEIAABCAAAQhAAAKrE3DK2GxOmmN7k9K1wbFCU6n5NuuaYy1bJkUgAAEIQAACEIAABCAAAQisRsApU7MpaY7tzY0V0rfBsflEWkib9e1jLjsCAQhAAAIQgAAEIAABCEBgcQJOGdqbETv3NzdWxNAGx3xMnNS+ufFjlrLZJgiBAAQgAAEIQAACEIAABCCwCAGnqP5GJLS5seSxGxzzPUktjh+7fpvTAYEABCAAAQhAAAIQgAAEIDAfAadQ/gaka3NjWR/Z4Jh/Ii2kfg4bX6QIBCAAAQhAAAIQgAAEIACBWQg4RfE3Hn2bG0v66AbH1pg4qZ/LxjepbYIQCEAAAhCAAAQgAAEIQAACowk4rfQ3HEObG0s2doNja0/SSurnNZvNIRCAAAQgAAEIQAACEIAABB4m4LTC32TEbG4s0ZQNjq1PpDepn9/GTopAAAIQgAAEIAABCEAAAhCIJuDk6W8uYjc3lmTqBsdimFykfh02LqS2CUIgAAEIQAACEIAABCAAAQj0EnCa9TcVj2xuLPhcGxyLdZLW0lBNNodAAAIQgAAEIAABCEAAAhAIEnCyhjYSSdC72zjnBseyWP5S6tdmGx8nRSAAAQhAAAIQgAAEIAABCHxCwGnkbyDusj26ubGgc29wLKZJLvVrtHEhHVOnliEQgAAEIAABCEAAAhCAwLMRcGrI3ziM3dwYm6U2OBY7k9bSUL2p7AgEIAABCEAAAhCAAAQg8MIEnHoPbRamfCOy5AbHLpXVZhswv27b+JylCAQgAAEIQAACEIAABCDwggScevY3CbZxSCayWHqD05R3DdRv/ZgdgQAEIAABCEAAAhCAAAReiIBTr0tsbgzhWhscy3WW1tJQL6nsCAQgAAEIQAACEIAABCDw5ASc+gttCJKZ+l5zg2Mlp9K71O/JNj6ZFIEABCAAAQhAAAIQgAAEnpSAU1/+RsA2B3Ntbgzb2hscy2lylfq92TiXIhCAAAQgAAEIQAACEIDAkxFw6sffAMy9uTFkW21wLLeT1lK/z1K2OTdxCodAAAIQgAAEIAABCEAAAlsRcErsP/Qvsbmx/rbc4Fj+k9R68/utZcukCAQgAAEIQAACEIAABCBwYAJOtfsP+0ttbgzT1hscqyGRFlK/bxtfpAgEIAABCEAAAhCAAAQgcEACTjX7D/lLbm4M0R42OFaHiZPWUp/BTbZEikAAAhCAAAQgAAEIQAACByHgVKf/YL/05sbQ7GmDY/WcpJXUZ2E2m0MgAAEIQAACEIAABCAAgZ0TcKrPf6BfY3NjWPa2wbGaEulN6jOx8UWKQAACEIAABCAAAQhAAAI7JeBUl/8gv9bmxpDscYNjdZnYZsZnY+NCmkgRCEAAAhCAAAQgAAEIQGBHBJxq8R/g19zcGIo9b3CsvpO0koY42RwCAQhAAAIQgAAEIAABCOyAgFMNoYf2tb+Z2PsGxy6VMSmlPq9aNidFIAABCEAAAhCAAAQgAIENCTjl9h/W77KtvbkxBEfY4FidJrnU52bjQroFO6VFIAABCEAAAhCAAAQg8NoEnNr3H9K32tzYlTjSBsfqzaS1NMTwJDsCAQhAAAIQgAAEIAABCKxEwClP6MF8y28fjrbBsUtlvEqpz9I2PmcpAgEIQAACEIAABCAAAQgsTMApvv9AfpfNHta3lCNucBpeuU58pja+Ng4cIQABCEAAAhCAAAQgAIH5CTiF9B/E97C5sU6PvMGx+s/SWhrim8qOQAACEIAABCAAAQhAAAIzEnCKFXr4TmbMMSXU0Tc41nsqtQ2jz9k2PmcpAgEIQAACEIAABCAAAQjMQMAphv/QbQ/iyQyx5wrxDBuchsVVJz5vG+eNA0cIQAACEIAABCAAAQhAYBwBp2X+w/beNjfW2TNtcKyfs7SW+uxL2RIpAgEIQAACEIAABCAAAQg8SMDJ33/A3uPmxtp6tg2O9XSSGm//GtSyZVIEAhCAAAQgAAEIQAACEIgk4OTnP1jvdXNjLT3jBsf6SqSF1L8WNs6lCAQgAAEIQAACEIAABCAwQMBp3n+g3vPmxtp51g2O9WbipPbNjX9dbrLZJgiBAAQgAAEIQAACEIAABDoIlLK3H6T3vrmxNp59g2M9nqR2LdrXxs4rqc0hEIAABCCwAoE/r5CDFBCAAAQgsByBnxU6k9bLpZg98n9SxHL2qPsN+E6l/bv0L9LrfsukMghAAALPQeCL52iDLiAAAQi8FAGnbtO3ju2B+QibG/sGJ3mr+ZUPP6l5Jz3CNXvl60TvEIAABCAAAQhAAAIQ6CXwPzXr/+rWq44rsTj10mISAhCAAARGE+AbnNHoWAgBCEAAAg8QuMr3v775/+8H1j2rq32Dc5FWz9ogfUEAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABFoEUp0X0lr6q7SUZlIEAhCAAAQgAAEIQAACEIDAoQicVW2zsbHNTVvTQ3VCsRCAAAQgAAEIQAACEIDASxNw6r69ofHPbR6BAAQgAAEIQAACEBCBP0EBAhDYNQGn6v46UGE6MM80BCAAAQhAAAIQgAAEIACBzQk4VeB/WxMamx8CAQhAAAIQgAAEIAABCEBgtwScKgttZnzbfbcdUBgEIAABCEAAAhCAAAQgAAERKKT+RiY0ts1NIkUgAAEIQAACEIAABCAAAQjskkChqkKbGd+W77J6ioIABCAAAQhAAAIQgAAEIPBGoNDR38j441I+qRSBAAQgAAEIQAACEIAABCCwWwKFKvM3M+2x/T9wnBSBAAQgAAEIQAACEIAABCCwawKFqmtvZvzzq+b5W5tdX0KKgwAEIAABCEAAAhCAAARs03KX+huaZmxzmRSBAAQgAAEIQAACEIAABCCwewJdm5talV92Xz0FQgACEIAABCAAAQhAAAIQaBG46bz5tqY5mi1t+XAKAQhAAAIQgAAEIAABCEDgEAQSVVlJbXNjx0yKQAACEIAABCAAAQhAAAIQOCyBkyrPD1s9hUMAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEXoPAF6/RJl1CAAILErB/LMH+lsgk++2/n/+nfDPddaw/n8byAIFMvvmb/1XH29s5BwhAYJhAKpfizc1eO/YaQiBwZAKpii/eGuCefgPBBucNBAcIQCCaQCbPRk86/1L6iPxdzndpKbU3Yzvvk6smT55DobHpK0qhpr9+a/xnHX02b1McXoBANqLHSmtMX1Uuavz7t+btvSh5VRD0/TQEcnXy7Vs3v+iYvp1zODCBUrU3//+QuY7Zxjws/1y9rBUnj2R2xN5iGfYhMD6xcWL9LOaakilZIa2lsTXG+llMi32ShuQmox8rDzkGbObnr506tphbSaLExqvdQxe3rWqcO2/m9dvufex5OaLIfOY6YmsY2+Oj6+7qz2oqpLn0LH3Ge6tSX202TuO1JFOidu5nOu9jmC/Qd9mXsGMul31O5hZvD1KpiHZf9tp9efnTyxMAAAQg0EfAabKU/pv0a+mj39ZoyaBYTIv971J7yHLStpgN+QcB++Dyr8EFOBCYgcB7xfhKaq/Fb6V/k9prspbepHafpdIjy0nFv/MacN6YIQSORCBTsdzTgSv254ANEwQgAIFMCHLpV9JHxH5lyh6I7m9HW5u21H8jtvm22EPWX6W51B6oblLkDwLuj9Pfz86/n3ECgfkJfKmQH970ex0/Sos31eFQ4gLV2ntcKq2kCASORsAFCrbXayqtpC8rbHD+cel/0sEeyBp9phuieeBseqp0YtonJ02m0vd9TivM2e9H2zWJkUROQ/X+KJ9qIJj1brHs+OWAb3va1tRtwwLnvyjmTXqXltKl5KrA30QGb2qyusqINYl8Mun5TbsY20bob9KP0lK6tdjryHqspKV0C0mV1B7GfDGGTlpIkW4Czb1ayaXsdltsxvJX0lJqYvfTmtL1fpqqCHu9xYrdg6a59CJduw+lHC2uY6X1Ybo36bpmoToTGd+HJlq2H3Vetcah05OMFsuOXe/PXevuoYkZbc1r2PIsnStUtuVvctc6v4WcVradO/I52fOOOcwHIHBSjVlLm5LN9muE3uVjMfYkiYrJWprqvJFSJzF91fJzUos1RWy9k1bSvrw3zcdIJqe+ODZXSp300dozrRmKbT6PSCrnXFpLp8ROtT5rabu3Svah2DZ/kS4tJyW4S2PqKeWXSaeIcXDSShqTs+2Ta02MpHLKWmo5G2nH6zqv5Zw1CzY+XpS/q85y49qWTG/XLGtpqvNGSp10MWnb82bBjEerq5S28/jnN807aSodK5kWNnpqBcl17ucLje/yy6RDYrGd1GqupaFYIZv5J9K9y1kFhuo3W7VS8ZnydNXQ2Ev5OOmjTDOtaWJ0Hc3nEUnlnEtraVfMxp7Jp0tSTWQtbfd2l72J0Xe8yG9usTqG8hfycVLz3Zs4FdTFrNpbsdQzD4FMYbouemOv5ZNKjySlim3q7zpaX6cFmrr05C4j82U9MaxuyzFWMi3sYtLYzWeMJFpUSJs4oWOm+TESiuXbpnCJrSmTo10DP7c/vsvHfOcU43uV+rn6xvkMBfTFb+ayGfLMFaJSoKau0DGdK9GB4pSqNcSibbN7a26xe/YubedpnxeaS6VLSq7g7Zyhc6vRan1UbI2T1tJQXN9meU7SPctNxfl1t8fnFYrPBmq4TKhhKLb1aj5jJNGiQtrm5Z9nmh8jfpzQeAqXrpqsp7s0lM9sudR89iw3FddVv9nPey6e2sYRyLSs76I3N++46NutKiP6cguWd1LsOlBDGZnzEljbXCeLPUUyLW5idR3NZ4oUWjx37K54jf0+peDIta6nr6YOO+bSJSVT8ND91a6hOc8nFpJofROr63ibmGPO5aeIeq9zJjxIrHKAS635ZIFeio68leyZdA3JlaTr3m3s2cRCjF0hbeL1HY11Kt2jWB99tdvcbYXCs546ThPz98VuejefKVJocRPLP2YjA/tx/HE1Mm7fMrsf7lI/l43Nnkr3LtZDqP62rdh7E9T3OIFMS9oXOXRuPkeTUgWHemls9QoNuUANZWTePLDWar9Eru9zyzTZcOg6ms9UKRUgFD8bGTgUq23LR8aNXebk2M4XOrf7KpOuISclsXyhOtq2fGIxWUQONzHHnMuvEfUat1eTUg237wv//LYAkLwjp+VKFsjXFbLUhN9vezzn/eAGcjV57/LbozgV1dTYd0wXLj7vqMPsUyVTgL7ebM58pkqpAKE82cjAoVhtWz4ybt+yQpPtHM252Y8iFxXa1N13XPM9aVfs/rSratYtplw33SrZ1vhwKdTJxxm7+UWxrjPGWzqUWzqBF7/yxnMOnYL9dSCg/ZFrJi2la4jdw5nU8m4t1dYFtPK71nnXqf1B8Llr8kntXw30Nfd7ovH9NpDzR9lsrg7MbWWas/dCTfwlohH7I/c8wm9tl0tkQhfpN6ebfQbmcwZcOJZbOL4ffu7XlN0LX/tJNLbXsAvY92qKrTXWb699jq7rWTc42Wgi+1649od5F42ia2KEPR+xZssllZL/tGIBlm8JOSnodSBws7m5D/jNPW353NxBDxzvrNpj/zUjuC13oVOFLgLhj/ZgFGghymTvFx8jPC/ySSP81nKxWmzjFSMuxmlmH+N6JKlU7JqfgfcZ4ZwU6/tAvKO9hq2P2Hv6Euj3JUzPusF5iYsXaLIO2JYw3WYMOmesGcvqDXXEmtsNJRpYD0MPzZl87tItxOr7YYvEO8zpHqjpg3zTB/xxjSdQyNV/zfws2yU+xOE9XUQHxijGLyLULC6P1PJOGc+zZI0PUsS77sbziDUnomefK74cbXNj9Tu/iZ6x3dNZz/zTTrHBedpLu2hjtaJ/nCGDPRxYrKNJ6E3ySD0UKtbe9PrkXzV573NYYS5Xjr+vkGfPKRIVZ5uWR8Q94oxvFIGLvPxv0O3ezKS19FWkUqMx7/1uR0AereW8Yu1H/QwsV2Q0V6pcgfzPPeNvr+2jyaP3qDtag3PUywZnDoqvGaOaoe1yhhhbhLAHml+8xKk33uvQ3hiHHph/kk+xgwaM82XDOsoNczep7Xr5MvSA6fwFjCcRSLQ6D0Swa1MH7M9uKiIatAfJNMJvaZdMCfyHWnt/65OvNWnXfA0p10iyQA67721z0JasPdjZ+Un1fOPV9HeNnfRor+Gzavbv6R9l6xNbk/Q5POMcG5xnvKrr9FS10nzVOn/k9P6I8858/drTndUXKsfe4IrQRMvWvOm3TJueFspuNb2qXLzGjcVZ2sfEPvzMB5mHQKEw9mtXbflBg7Jt2OF5tVBNZWTcU6Tfkm4uENxeUz8H7G2Taw8WPL8vGHvp0NXSCWaMXwRi5bIdkf+5oxf/h65tN3v/Cq1r+zzdORucp7ukh2qoOlS1nxZ7xDfGi1rwH9Q+7eofP6mufePG42Lj/FulT5X4vZf8prFdHzv2yblvkrloAsbxg+dtDxIXz7bHYbVQURa3b4PdpD01Jxse/dfBR9VSSQtpn6x1fau+InY+d995fU15uU7891G7D66Nw4GOiWq1bxjb8pMGlbSQ9sla93RfDavOscFZFfdTJStHdJN5a47yBumVfcihvTEOvcHZg9t1h90VO6xpjZJcIElzfW6BubbJPgSTtoHzhwkYv4Z3e7FrD170/H6Avu06+T/QKd7qvr0duw72LWjWNTnBbvdUW6r24GDn9QHqTVXjxavTNufOsx1leA4UenuzFYG5tsk2eae24dnP2eA8+xVerr9Kob9r6ZhM9ZhFO1lT7qSO2DIucvQ/7P21uW/YyfiuOmzz9WrivIaNgbEwuUmHmDhzREYTyLXSHnTb8oMGZdvA+W4JnAOV2evGpJLaT777xPVNjpw7eesqb3yk4f0AxRaq0f/cy2WrpEcU5xVtm7XizVbp+PPbedfh0jXxjHY2OM94VdfpqVKavKU6RXZMYOiNzd4obzuu/wgfpnPiyxTMf7i+egmGrtfF82cYTyCT6zeeu71Gcs/GcJ8EEpX1wSvtR43rlm3o9XOWr8VBjknAqeyvvNJtA3D1bEcZpirU78e/h4d6Ox+l2TnqZIMzB0ViQGDfBJzK83+K5VdcyFD7xh2N7zuqZY1SXCDJzbNdvbE/tA1S5hsZRxEIsXVaWUetxmlrAi5QgP/6sbFtWrvE3jPPXZPYd00gUXXXQIUuYDuKKXQvFl7xN2/sD+2edr7xWcd/ftbG6GuXBO4bV1XNmL9WrI+teHPGboWd5TT0xugHLnzDzsal6vl2ZzUtWY5/zX5SsspLaGP7ieR7z94eOg3KtoHzQQK5PHym9lq/Da7EoU3A3iO3Eucltl/n9K+f1We2rz3f9vCiQdE2TDy/T1y/p+XGb6+fgYVqs4f5tvygwZH5273YFruny7ZB53ZNfpT23dNO84UUOSiBXHX/OqBHbG2oJ+v7VSVT40N89shmqGbra4okWjyUo5qSYKW1qfK0+8gn5s28eO3YzfnEFKOXu0BtZguJfeg19XYd7R54VunqubHnDzaeyr9Z2xztocHse5NSBTU1ho75ggVXA7mtnky6hZyU1Odx7SjkHPD111q8I0imIv3a/bH57E38Gv1x9mDB5u/HqGRLpEcVuwf9nvKOZmLu6bRj7VOZ+RW1p7qcszSTK0pbU42R4xKwN7shuQ057GC+Ug1ftDTX+bOKf83s12i6rlERAcGPF7HkZV1CPK+iUb0skc8bT2R697n5M0v5mWUdgwuksWsYkpuM9pPwPrn0TTK3KwJ2bxaBiuwa1gH7UUyhe7DoKP4mu31m9EkoXp8/czsikKsWf7frj3dUbnQpfg/+2PqeKn7MbGrAldZbnX7t/nilUh5K49foj62vKWJvdn5Mf3yekuCga7MILlu0lgbqKgYKGbrG94H1R57272V/nD/Q3EW+/vo9sysD9bbrzzW/hJwVtJ0ndH5bInFkzMqrb+gaXj1/v586Mu/WbtlAH9aX+exNfN7+OHug4Fy+/vot78UHSu91tXuw3VfZ6/2Pvz9q+/vnR7mnB9rsn+YbnH4+zELg6ASyiAbKCB9c1iFwDqQZ+oAemre/JzkF4mL6g0Ci0/yP4e9nl9/POGkInJuTnuOtZ27JKavtnZeg8Mb+8OobvLH9LYfzbAz3R+Ckkr71yrJvMi6e7WhDu6f9vycqBpoYmn+Je5oNzsBd8oLTH1+w52dt2d7w/TdGv1f79YzaNzLejIDzMtv1uXk2f1jIwK8k+FQeGxtD/7Xyg2ylFPmDQKrTr/8YBs/sXhy6Z4MLZzCeAzGKgK1tqjT4uW0InLuADdO+CBSBcnLZqoD9SCYXKHbo9XXXmqFfvQy9VgKpjmtig3Pca0flEBgicBpy0HwV4YPLOgTser33Ut28cddwyO+shUnX4he3Z+r/g8fAHg5yz8YwjslVoOoNYNn97W++foqspRio9yvNpwM+TG9H4KLU/nvnR9nsXjyy2D3tvzfF3tNDvVvc9MhwhmpngzNEiHkIHJdAGlF6GeGDyzoEXCBNEbCFTEMfZl9q0Tm08MVt9gBRBBhcZKsD9lc2ZWre30D4PGxjePWNK43PgTy3gC1kKkJGz3bxxgz3QSBVGXmglGe4Xi7QVxGwhUwx974LLXwWGxucZ7mS8/Vxny8UkTYmkG2cn/SPETh77vawGPt6ND/z7xPXN/mic7n6fuf1bj8hvXm2Vx+eIpk4+dUbwbLcvsReR6vZrnufuL5J5jYjUCiz/QCnLd9pcG8bDnruvLr/rnHsPV3J96XvaTY43t3DcLMPJ9DPTyCJCPkMHwIRbe7e5awK/Qft64NVD/nzazafAj1p+M2npt/+luni2V59mAlAKfUfImX6ROyhsvzEst4gVSq7v9vyowZ12zBwXgzMW/9uwIfpdQmclc6/7vaDnuu6ZSySLVXU917kmzceGg7522eOMXxK+fNTdvW6TTm1nk1sP524nuX7IeC/OYYqq0NGbKsTCH3IDH04+UWa//e+0RtfNDZ9FcnUaN7R7DlgN98qYH9FU6Kmc+k3Ec3bZsJ8t5LQtbw9WIz520/Iv+xZZ3mKnvm9T5V7LzBQn5MtC9jNdAnYnWx1wH40U6i324NNFPK/Svvuaaf5R+NqCbIVgVyJfx3QrWqbkneopyXmsykFr7jW6hzqf8VyolMN1Wx9jZWh2DafjQ1+8HXW9xCftVpMArXcRya3D6q+vuqRcfe6rK/XMXPGL9lrs15dpcZ9Peaef+wwlWMutXulL34zZ75bS6UCmnrsOPY+v3px2jGb81Q+e5RMRTU1dh33WHdXrWPtdg2fQSo10WZg4zFSaFE7Tug8GRN472v4FbW9XyHqgwAEnp3AOdBgEbDFmG4DTvaTPDfg88rTH9T8XXp6IQiJes2kudR6/1/Sb6V9P/XV9G9/8/UvOuY22FDsWr3z8t+8ceywiHB0ET64bEfgG6W2+zjZroTJmTNFmOuevkZU4yJ8cNkJgVx1/DqgOyn1oTKGehqar5StfFM7H/K3+Ux6BMlU5FA/e+xjqGbra6wMxT7S9R3LoGtdpokhPl1r57aXgVrGfjjbujoQr93rTfPPIu2+5jw3hqedQypVX1/PlebNx9SueS69SsuWWp99MUJztiaXJtI9SKEi/DpPEwq7B+K141cTYi+5NFPwdp2h8yXzj40dqnMOm92nU+6Dsf3Msa5QEJ/BlF6qQLx2fJtHDkIgV53tixc6P0grn5QZ6qNtK+SdSRNprKRydNJK2o7VnGeyH0EyFdnU3HXcYx9dtTZ262usNDH6jtnY4AdfZ333cbG5NSRVEr+O28TERSCmnyOdmGMvy/2+/HGpQnNPa419v9DY/E7SvUqpwkJ1L2W7K5+TJtI9iV2nds/VxOIuXrx27Ob8PDHHEsuziLqXyDs1ZsO061goQd7Sq867fH17Jd9EeiSxemtpu5dqYgO5F68duznPJuZg+UoEcuVpLlrXcaVSZk3T1Utjt77Hir2o7tImVnPMxgZceZ3V2dTcdVy5pKh0XbU2dutrrDQx+o7Z2OAHX2d993GxuTUkVxK/DjcxcRaI6efIJ+bYy3K/L38c6jNV8aH3On+tje1Bw/z3KKWKCtU8l816v0kv0lS6RzmrKL/f68RCk0BMP8dtYo4llmcRdS+Rd2pMn60/tr58OclQS33f0Pguv8QPsOOxU21+H5eJ9aaBmH6OYmIOlq9EIFce/+L545VKmTWN34M/tr6nSKrF/ptGNiXgimutTp+HP16xnOhUfo3+2PoaK36s0Pg8NvjB12WqP8SjbVujxcqrw15/yQyJ/bjtvuzc5p9B/L78cd7RpDG+S33/0Nj85rgmHaWMNpdaGap3Dlul2HvsWWV9IjeN/H5Pn3iMG4Ti+nn2xicLsPBrHkdj2VV+jf7Y+gqJXeda6vuHxnY9jyJWq99DOkPxZSCunyeZIc9uQvCPDOzmUuyikEpVHOmNYBfQDl7E6eD1H7l8Y//Oa8Bef7VnGzMsBhZZ3vOAzzNPG+NMav8s8JC8l8N1yGmH89+ppv8i/RdP/1njn6V9YvdHKU36nDaes9rsH4Voi/V1bxtGnt8i1rkIH1yWI2DXOZPGvIbtPrlI9y6pCgzd09UMhRcRMc4RPodxYYNzmEu1WqHlaplItAcCyR6KeNEaQh+4t5lYFBFxXITPM7vUai6TxjwgfS0/Jz2aVCq49LTp+xfZ+8Q2dqU06XPacM4FchcB2xiTxRm6Ly5jArNmVgJ3RXOREb+XXxbpu5XbOZC4CNjGmG5a9FL3NBucMbfJc6+pnru9l+ruY0S3pwgfXJYh4H+Y2YePfQjNIZWCDF1/+0lhKn1luav5SySAq/xOkb57d6tV4DmiSNvk5BF+W7i4QNJbwDbWNBTLvuXKxgZn3WwE7Dp9FxnNfJNI3y3cXCBpEbCNMdVaZP33ib3eT30OR5pjg3Okq7VOrfd10pBlBQL2hjYkT/NmNtTozubPqudLr6abN546LCICWB2vLoUAxDwg2fUy30T6DHJXEzF9fyO/vd0nqWqyh7G2/KxB1TZMPL9GrHcRPrgsTyBXip8i0thr+Bbht4XLSUn9e9p6qmcspoiIdYnwOYTLnw9RJUWuSWDOF9OadZPrcwJ3mT58bv7EYm/4qbSSIusRcIFUlWxZwD7WFPNatg+z69gET7QuVy+Z9Ctpn9gDiPFyfU4HmstV61nqP1j5LRQypNJauge5BIq4y5YF7FNM9q2qvUd2if3qotWyFy5ddb6C3anJUjp0L9trPH9THXYjLlBJJVsWsE8xDd3TZwVPpNzTUygvuDZX7F8HdMH0i4Ue6ilfLPP+A2cqcYjPHrsYqtn6Giv2RjUU3+bd2AQHXpep9iE2S7VnHx5DudecNxZHlSFO+QONNR/qQzFt3j0QdynXUoH7as0jE58G4jQ5bpHx1nCrImtual/y6NZoOCJHJp+hPiPCrO4yVLP1FSt2L9fSoZg2n0n3JLF1x/Q21cftCczYWv40diHrIACB3RMoIys8R/rhNg8BN0+Y2aLsrZ7ZGnswkD1gxL4WrvI9PRh/r+53FfZDRHEf5JNF+C3tYjW8WzrJA/EvD/jiuiwBu5djr8dNvsmy5URHP8uz75vC6EAzOcYynCndMmHY4CzDlagQ2AOBWkX8HFFIFuGDy3wE3HyhZon0taLs5YN+loYmBCm1NubvUuxhpJA+C7dcvdivrgxJIYete3ZDRa48b78SdVo5J+m6CRSa+rF7+vcZew3ffh9te3LeNv1n2e2eTj+zHszA3+Ac7IJRLgQeJFDK396s+sTe6J20kCLLEkgVfuh6+BV89A094zIwZw9fHwL2tslpcG0bXvg8V++Z9Ctpn9h1NGauz+kgc/VbH38bqNe+OcmllwG/paYTBT4/GNx+yGP9xUgZcEplsx8C9InxcH0OzK1KwK5HJrX7tU/sNZ6/aZ/fknOJgg/dX37+te5p44jsjECuen4d0LVLTpUwa6lOH5ahnvKHIz7PgkytDPHZY7dDNVtfU+SkxUM5bL6ckuSAazPVPMRlibaugbz5EolaMVOdD/V6b/kf6XSor3xkM4nW1dKh+DbvpFtIqaR99eUjihqK2eQ7jYg9xxKnIE0NzfE2R+CBGEP3gs0nAzGWns6UoGHSdVy6hjHxu2pt7NbXGDlpURNj6JiNSTDTGqc4fn3FTLG7wti9avesn7c9tvlDC7+itt7lc0r1by1dL/M6mTKladRePMg+CNxVxi8RpXwlnzTCD5dpBM6B5UXANqepUrChb4Hs24jTnEkPHqtW/aFrFWrrKuOzsHPqJfZX1UIslraFrkmxdFLFvw3k+FLzodoGljG9IIG7Yv8lMr5d3yTSd263SyCg1bOk1Ao+lMPuabdkEUvHZoOzNOHXid/evJ1ep+1DdHqNrDKP9MNtHIGzlr3zltqvGlSebYlhERH0EuHzSi6lmv0homF7ECikSYTv3l0qFRjzfmEb4ly6pqRK9sFLaJuxm2dbYhjD5LJEYmJOImDX7aeICPYaXuM+8ktJZbDXUlvWuqeLdtKOc9dhP4SZDc42l+nnbdIuljVbLDKB5yBQKIi9aQ7J13LIhpyYH03gHFhZBGxLmGI+vK2+ZInkB455Ue0x79f2kFIcuM926bkGMT0bm1S6ltj96cvNNyw0vivu0Dfhdg+kC+Un7HgCTkuHrp1Ft99iyO1kRXGBXGvd06VyD3ExJqn0kMIGZ73LdmqlqlvnnEJgaQJ2v10jk+SRfrg9RiCR+zmw5BawLWGqFfTHgcD2U8xQjQPLnn7amMT8gOCD/C5PQiOmD7tfihX7dYFct4BtKdM1InAMt4gwuMxIoFasc2S8b+WXRfrO4eYCQW4B21KmmFyhGpeqZ9a4bHBmxdkbLOmdPfbkM/d27CvzR/VXncY8pNlPbC5/LNvtWbrbysKFnWW2B8K22E/Jq7Zh4fNbRPwjXPuINmZ1qRTNRUb8Xn6nSN89u5Uq7oeIAu39wkX4TXUxpu+9IPZ+FnNPe8tGD2NyudHRWbgkgbuC/yUygV3nJNJ3ittJi995Ada+p69e/tDQhYxHsLHBWe8q2QfBs4q9UJF9E6hVXh5Zovmlkb5buDklvUvPWyQfmTNU621krLHLLN/QryTYQ+RpbIInXmfsYh74DYH5JnZycMlVvz1wDclVDkv36wJFlAHbkqZKwX8aSGA/xHADPkxvQ8Du048Rqe0a3iL8prpcAgHWyNtOW2nwc9sQOLdN2Dlg372JDc46l+i0TprNsvj9VZtVQuI+AldNDr2Z2frmDT7pC7bRnN1r1ofV+DfpRbp3MY4fAkXeAralTTE53dJFHDS+3Wsxrx97ICgO2mO77FoD1zZ0nNtrseiYm8t8DgSKuZcDyyaZYnKGap2UlMWzEbBr8/eIaPYD6TzCb4pL6D6Jub+m5AytvYaMns15Y4YbEsiV+9cBXbO8i1dLOTL5UE/5yLhTl9UK0K5tarwx6zOvhnY9zfmYuEuvaWrrOlpfc8pJwbpy+fZizsQzxLLa/XvtMjJupnV+v/54ZOjPllmNfuzqM691DKnS+LX442qdUmbJ4tfuj/NZsvwRJNWpfw/6OZvx2Hvzj2z9Z6Wmm1yhY96/PHq2lGcovm/LoiM+5njuyJ88FmYWb8tZd9TT5rFFbVlEXXLZnbS5hc6zmSu2eKE8Idt55txNOIsbytfMr3m0ezVUi2/b4p6exIFvcCbhi17soj2P52i92U/wkMcJbPGGcVeZf4ks9Wv5FZG+S7udlKCUtu+1nzS+SvcuLlDgLWBbw1QpydCvqb2Tj/FGPidQyXT53By0fC9rFpw5ltGp3JifehfyS6RzyzkQ0H7VqA7YlzZZzjIiSajmiGW4rECgVI7vIvMU8jtF+j7iFro/7PNsC7F7OiZ3tkVxU3KywZlCL25tJrf3ca6H9HI7qTrZSR2PlLHEG2dM/qucfoxxlM8eNjlOdZTS9ubmZ42ddO9i1zj0+i83LPwWkfsc4fOqLoUaj339GGu7B44slYrPIxqwjXGMX0So310SnYXuReO6lZQRibMIH1y2+wFALvi2SR4S+8wppHYfziUWyz5Xfdnynr77xQTG54Bt1yY2OMtfnuvyKTbLcFHmrzbL/mni06dDRgMEnOZtkxAj9mZ8lyYxzjP6WL6r9K/S9ubm7xpn0lq6d7kECrT6bwH7WqYYbtlaxSycJ6bXMSXYdY15/dh9a9c6GZNkR2uuqiWm32/kl81Yt1Os9mu/CW1Mt5J7ROJzhM/cLtncAZ88nl0jey8ekvdyKKXJkGPk/KXD79ZhX8NcRiTJInxwWYFAoRy/9mi9Qg2WopCG6shlf1RSLQjFatu6XjiP5orxP/XUE7N+bp+ip56G0dw5p8Y7R9ScTU3Ssz7R3F3a8Bk61vK1mteQTEkqqV+T1XCSTpVcAfzY/nhqjqQjRzE18MT1mdb7vYbGE9Msvtzug1DdbVu2YBWpYtv92M7XdX6Xn90Pc0pXrsaez5lMsWJ4W25jMlevlWI1/TTHu2xbSqbkTS19x3TlIouIulYuaTDdOaLmbDDKeAeL3XcN23O38Wk+WVkFcs4V+5NEDwyyQE3t3pvz9IGYuC5EoFbc5oKEjuVCedthCw1Cuc2WSx+VixZ0xWvs2aNBR/oP1TIy7KRlQ9fcGO1NChXUXLuuY7Zw0Ynil9Ku/CH7Tf6pdAnJFLSUhvJWsp+kc0ipIKEcbdvUPNeOHHP1MLa+vKOudu92vnWdQ/3F9JENBZk4b/F9bl3ju3yTifma5ZlOuvI09rxxnvF4ichr+efotSuXm7GfMaHOWtQw7jua35pSK1lfPTa3NylU0FDN2cJFu4gamhpL+SbSsZJrYROrfXRjA860LvaezmbKR5iRBHKta984ofNyZOyYZSc5WfxQ3saWa/4RsRdULW3Wdx2zR4KO8LX4pbQrf2OXy6pyUbYmd99x1aIGktl90ldrM2fXfg0plKTJGXu0Nal0qliPTlpKu3LfNTcXi3NPnnZ+uY0Wp5XtWM15NTrifAuthqaevmM2X8rZI9m9UEv76re5TLq0XJRgqI5mvpLvaYaC7hE58xnyhEKUMjb99B2txiQUIMJmjGppKP7YmBFpo1xuHXX5teZR0eZxcgrj5w+N58k2TxS7xqEafVs6T7reKIVm/bxd47t8U+mj0tVvrUDJo8Fm9i8Vr6vftj2fOS/hHiBwkW/7YnSdlw/EjHG1G9dyl9KunG17Lr9YSeV4l7bXd51n8ptTUgU7S6/SStqVt22v5bemWH2Ws11D6LwKFJXJ1miq87UkU6KYmq2PtqQaZG9q53OLU8DYutqM71p3kZ6ksWK+TnqT1tJ2PP+80HwinUPOCjKUr8nfzpdqkL2pnfeJ02QTwz9evIWZxo3O1aOX4pNhoZFfU9c4a6202mxsepJuKamS36VddbftmfwaWbKHQknaeYfOc/lbPY+KrblJh+LbfC5tS6ZBo237o+dWQy2NqcH8nPQRyeTcFb/wAp00zt401XFpuShBTN8+/0Trsje1mueUs4LV0qG6qkDSTLZGU52vJZkSxdRsPbUl1SB707k5loo7xLCZt9ov0ljJ5NjVb+EFsb6yN011XFpyJWj6GjqabyOJTrI3tZp3J1/srqLHCjKojZ51/i5yuf1h2T3S13ezfKE/evT9+sbfaTLvcEhktxzZ2/GDjrFifwRaxzp7fnP0ZSE/SjM7WUhSxbVaTc9S+wPAOaTvmkyNnyqAafamX+k4VZaq17hepVNqtHvApPztv3/8J3s7jY1tr1Mnvb2tG3NItch6Mj1L57hffPaJlyO2Py37RP5Fo/ITy/RB03vT/7vpIRd/jfslNnwzTVgfj7wn+rGasd2jWTOY6VgoztcPxLL7+ya9v2n9dtThE8k0sr5Nz9IvpVPli4kBrJZ/fyDGL/K9Se/S6u1Y69hIphOLacex1/c7rc2lc4rVlErt6KR7eP2kqsPqMT1L30vnkCX4NXWlOjHN3nTse6SW/y4fdZb9Ppp+kihEKX2E5y9va+46mlZvqsNvtZ3ejtzTRgR5iEAp718PqLlq7pJME0fsqam57GpsJnuuOE2uOY8WdynJFXjOWi2WxVxSnILX0rnrjolneXNpIp0quQLE5HzEx2K2JdPgkfVdvhZnbikVsCvfWLvFXFMyJRtba9e6cqEGigm1dtXU1cMU+xztuwm9Zl4BU3pp1uZezDmGpYI08ec6WswpkmvxXLW041jcpSRX4HauOc7LBYq1z5z7hFrzVk1z9NiO1wo96bTU6jlqa8ewmLuTP+2uIgqCAAT2QKBQEan0O6n9pHkNsZ+GWb5Umktto4NA4EgEnIr98UgFT6i10Np/nbCepRDYGwH7zMmk9tswyMEJsME5+AWkfAgsSMDe7HNpIrUHmZ+kc4ttnuyB8L9JU2kuZWMjCMhhCThV/hep3dvPLoUaZJPz7Ff5tfqzz5+T9DvpK7yGn/bqfvG0ndEYBCCwBAHb7JylmdQ+BB75fWW5/yYf9d+7tJTepAgEIAABCEAAAhCYjQAbnNlQEggCL0sge+u8OfogahlsQ9Mc/XnGEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAAQhAAAIQgAAEIAABCEAAAhCAAAQgAAEIQAACEIAABCAAgfUI/H+GmilkTgvkLAAAAABJRU5ErkJggg==" alt="Logo Letícia Kratka">
+  <div class="header-tag-light">🧭 Método Travessia</div>
+  <div class="header-title-light">Calculadora de <span class="header-title-accent-gold">Liberdade Financeira</span></div>
+</div>
+
+<div class="main">
+
+  <div class="card" id="form-section">
+
+    <div id="intro-step">
+      <div class="intro-badge">📊 Calculadora gratuita · leva 2 minutos</div>
+      <h2 class="intro-headline">Sua aposentadoria só acontece <span class="header-title-accent-gold">se você tiver um método</span>. Descubra quando ela vai chegar.</h2>
+      <p class="question-hint">A maioria das pessoas acredita que está no caminho certo só porque ganha bem. Mas <strong>ganhar bem não significa construir patrimônio</strong>, e isso não acontece sozinho, só com o tempo passando. Em <strong>menos de 2 minutos</strong> você descobre em <strong>qual idade</strong> pode se aposentar seguindo uma <strong>estratégia estruturada</strong>, e por que sem ela essa idade pode nunca chegar.</p>
+
+      <div class="intro-preview">
+        <div class="intro-scenario intro-scenario-atual">
+          <div class="intro-scenario-emoji">🐢</div>
+          <div class="intro-scenario-title">Sem plano</div>
+          <div class="intro-scenario-sub">a meta pode nunca ser batida</div>
+        </div>
+        <div class="intro-scenario intro-scenario-metodo">
+          <div class="intro-scenario-emoji">🚀</div>
+          <div class="intro-scenario-title">Método Travessia</div>
+          <div class="intro-scenario-sub">com estratégia consistente</div>
+        </div>
+      </div>
+
+      <div class="intro-steps">
+        <div class="intro-step"><div class="intro-step-icon">🔢</div><div class="intro-step-text">Seus números</div></div>
+        <div class="intro-step-arrow">→</div>
+        <div class="intro-step"><div class="intro-step-icon">📈</div><div class="intro-step-text">Sua projeção</div></div>
+        <div class="intro-step-arrow">→</div>
+        <div class="intro-step"><div class="intro-step-icon">🎯</div><div class="intro-step-text">Sua idade de aposentadoria</div></div>
+      </div>
+
+      <button class="btn btn-cta-calc" onclick="iniciarCalculadora()">Descobrir minha projeção de patrimônio →</button>
+      <p class="intro-microcopy">100% gratuito</p>
+    </div>
+
+    <div id="dados-step" style="display: none;">
+      <div class="form-section-label">Seus números</div>
+      <div class="form-section-title">Vamos calcular sua projeção de patrimônio</div>
+      <p class="question-hint">Não precisa ser exato. Um valor aproximado já é suficiente pra ver sua tendência real.</p>
+
+      <div class="field-row">
+        <div class="field"><label>Idade atual</label><input type="number" id="idadeAtual" placeholder="35" min="18" max="85"></div>
+        <div class="field"><label>Idade que quer se aposentar</label><input type="number" id="idadeAposentar" placeholder="60" min="19" max="89"></div>
+      </div>
+      <div class="field"><label>Renda mensal líquida</label><input type="text" inputmode="numeric" id="rendaMensal" placeholder="8.000" oninput="formatarMilhar(this)"></div>
+      <div class="field">
+        <label>Quanto você já tem guardado/investido?</label>
+        <input type="text" inputmode="numeric" id="patrimonioAtual" placeholder="0" oninput="formatarMilhar(this)">
+        <div class="field-sub">Pode deixar 0 se ainda não tem nada guardado.</div>
+      </div>
+
+      <p class="error-msg" id="err-dados">Confere os números: a idade de se aposentar precisa ser maior que a idade atual (e menor que 90), e a renda precisa ser maior que zero.</p>
+      <button class="btn btn-cta-calc" onclick="validateDados()">Continuar →</button>
+    </div>
+
+    <div id="contato-step" style="display: none;">
+      <div class="form-section-label">Pra onde eu mando seu resultado</div>
+      <div class="form-section-title" style="font-size: 16px;">Preencha rapidinho pra ver sua projeção completa</div>
+      <div class="field"><label>Nome</label><input type="text" id="nome" placeholder="Seu nome"></div>
+      <div class="field"><label>WhatsApp (com DDD)</label><input type="tel" id="whatsapp" placeholder="+55 11 99999-9999" inputmode="tel" oninput="this.value=this.value.replace(/[^\d\s\+\-\(\)]/g,'')"></div>
+      <div class="field"><label>E-mail</label><input type="email" id="email" placeholder="seu@email.com" autocomplete="email"></div>
+
+      <p class="error-msg" id="err-contato">Preenche todos os campos pra ver o seu resultado.</p>
+      <div class="btn-row">
+        <button class="btn btn-back" onclick="voltarDados()">Voltar</button>
+        <button class="btn btn-cta-calc" onclick="handleCalcular()" id="btn-submit">Calcular minha projeção →</button>
+      </div>
+      <p class="form-microcopy">100% gratuito</p>
+    </div>
+
+  </div>
+
+  <div class="card" id="resultado" style="display: none;">
+
+    <div class="resultado-sticky-params" id="resultado-sticky-params">
+      <div class="resultado-sticky-label">✏️ Ajustar e recalcular</div>
+      <div class="resultado-sticky-fields">
+        <div><label>Idade atual</label><input type="number" id="idadeAtualR"></div>
+        <div><label>Idade que quer se aposentar</label><input type="number" id="idadeAposentarR"></div>
+      </div>
+      <div class="resultado-sticky-fields">
+        <div><label>Renda mensal</label><input type="text" inputmode="numeric" id="rendaMensalR" oninput="formatarMilhar(this)"></div>
+        <div><label>Já guardado/investido</label><input type="text" inputmode="numeric" id="patrimonioAtualR" oninput="formatarMilhar(this)"></div>
+      </div>
+      <p class="error-msg" id="err-recalc">Confere os números antes de recalcular.</p>
+      <button class="btn btn-cta-calc btn-recalcular" onclick="recalcular()">Recalcular →</button>
+    </div>
+
+    <div class="result-header">
+      <div class="result-badge">Sua projeção</div>
+      <h2 id="result-title">Veja quando você realmente pode conquistar sua liberdade financeira.</h2>
+      <p class="result-summary" id="result-summary"></p>
+    </div>
+
+    <div class="hero-antecipa">
+      <div class="hero-antecipa-label" id="hero-label"></div>
+      <div class="hero-antecipa-value" id="hero-valor"></div>
+      <div class="hero-antecipa-sub" id="hero-sub"></div>
+      <div class="hero-antecipa-disclaimer">⚠️ Essa idade só acontece se você seguir uma estratégia estruturada de aporte e investimento, com consistência. Sem isso, os números mudam completamente.</div>
+    </div>
+
+    <div class="explicacao-resultado" id="explicacao-resultado"></div>
+
+    <div class="chart-wrap">
+      <canvas id="chart" height="230"></canvas>
+    </div>
+    <p class="chart-legend-note" id="chart-legend-note"></p>
+
+    <p class="assumptions-note" id="assumptions-note"></p>
+
+    <div class="section-title">O que percebemos</div>
+    <div class="diagnostico-box" id="diagnostico-box"></div>
+
+    <div class="proof-card">
+      <div class="result-card-label">💬 Sobre esses números</div>
+      <p>Mais de <strong>4.000 alunos</strong> já usaram o <strong>Método Travessia</strong> pra destravar <strong>+R$20 milhões</strong> em patrimônio juntos. Isso não é sorte, é decisão, e é exatamente isso que eu ensino a construir na prática.</p>
+    </div>
+
+    <p class="cta-context">No dia 10/08 às 19h30 eu vou dar uma aula ao vivo e gratuita explicando exatamente como aplicar o Método Travessia: quanto guardar, onde investir e quando cada sonho vai acontecer.</p>
+    <p class="cta-lead-in">👇 Pra participar, adiciona o convite na sua agenda:</p>
+    <div class="next-action">
+      <p>Sua aula ao vivo · 10/08 às 19h30</p>
+      <strong>Como saber quanto guardar, onde investir e quando cada sonho vai acontecer</strong>
+      <a href="https://calendar.app.google/52qU5fv4iFd6sCYF8" target="_blank" rel="noopener" class="btn-calendar">📅 Adicionar aula à agenda</a>
+    </div>
+
+    <div class="btn-row" style="margin-top: 20px;">
+      <button class="btn btn-back" style="flex: 1;" onclick="voltarEditar()">🔄 Fazer nova simulação</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwFNMs5o_kHIvQ2V866R3rr_s729nYEFZBXI1G1dmhwkHO1jThHIJd_5mpp-PDasXZqGA/exec';
+
+  function getUtmParams() {
+    const p = new URLSearchParams(window.location.search);
+    return {
+      utm_source: p.get('utm_source') || '',
+      utm_medium: p.get('utm_medium') || '',
+      utm_campaign: p.get('utm_campaign') || '',
+      utm_content: p.get('utm_content') || '',
+      utm_term: p.get('utm_term') || ''
+    };
+  }
+
+  // ---- Premissas ----
+  // Toda a simulação roda internamente em termos REAIS (poder de compra de hoje) — é o jeito
+  // correto de comparar aportes/patrimônio ao longo de décadas sem ficar inflacionando cada etapa.
+  // Pra EXIBIR os valores (o que a pessoa realmente vai ver na corretora no futuro), a gente
+  // reconverte pra reais NOMINAIS usando INFLACAO_ANUAL. Isso preserva exatamente a mesma idade
+  // de cruzamento da meta (só multiplica os dois lados da comparação pelo mesmo fator).
+  const R_REAL_ANUAL = 0.06;
+  const INFLACAO_ANUAL = 0.05;
+  const EXPECTATIVA_VIDA = 90;
+
+  const R_REAL_MENSAL = Math.pow(1 + R_REAL_ANUAL, 1 / 12) - 1;
+  const INFLACAO_MENSAL = Math.pow(1 + INFLACAO_ANUAL, 1 / 12) - 1;
+
+  // Método Travessia: mínimo de 20% da renda guardado, gastando 80%.
+  const TAXA_METODO = 0.20;
+  const SPEND_METODO = 1 - TAXA_METODO;
+  const COR_METODO = { linha: '#1A8754', fundo: 'rgba(26,135,84,0.10)' };
+
+  let chartInstance = null;
+  let lastCalc = null;
+  let leadCaptured = false;
+
+  function iniciarCalculadora() {
+    document.getElementById('intro-step').style.display = 'none';
+    document.getElementById('dados-step').style.display = 'block';
+    document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Formata um campo de valor em reais com separador de milhar enquanto a pessoa digita (9000 -> 9.000).
+  function formatarMilhar(input) {
+    const digits = input.value.replace(/\D/g, '');
+    input.value = digits === '' ? '' : parseInt(digits, 10).toLocaleString('pt-BR');
+  }
+
+  function parseMilhar(str) {
+    const digits = (str || '').replace(/\D/g, '');
+    return digits === '' ? 0 : parseInt(digits, 10);
+  }
+
+  function validateDados() {
+    const idadeAtual = parseFloat(document.getElementById('idadeAtual').value);
+    const idadeAposentar = parseFloat(document.getElementById('idadeAposentar').value);
+    const rendaMensal = parseMilhar(document.getElementById('rendaMensal').value);
+    const err = document.getElementById('err-dados');
+
+    const valido = idadeAtual >= 18 && idadeAtual < EXPECTATIVA_VIDA
+      && idadeAposentar > idadeAtual && idadeAposentar < EXPECTATIVA_VIDA
+      && rendaMensal > 0;
+
+    if (!valido) {
+      err.classList.add('show');
+      return;
+    }
+    err.classList.remove('show');
+
+    // Se a pessoa já tinha enviado os dados de contato antes (ex: voltou pelo navegador),
+    // só recalcula e mostra o resultado direto, sem pedir nome/e-mail de novo.
+    if (leadCaptured) {
+      const patrimonioAtual = parseMilhar(document.getElementById('patrimonioAtual').value);
+      computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual);
+      showResult();
+    } else {
+      document.getElementById('dados-step').style.display = 'none';
+      document.getElementById('contato-step').style.display = 'block';
+      document.getElementById('contato-step').scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+
+  function voltarDados() {
+    document.getElementById('contato-step').style.display = 'none';
+    document.getElementById('dados-step').style.display = 'block';
+    document.getElementById('form-section').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Volta pro topo do resultado, onde fica o quadro de parâmetros pra editar os números.
+  function voltarEditar() {
+    document.getElementById('resultado-sticky-params').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Recalcula direto na tela de resultado, usando a barrinha de parâmetros no topo.
+  function recalcular() {
+    const idadeAtual = parseFloat(document.getElementById('idadeAtualR').value);
+    const idadeAposentar = parseFloat(document.getElementById('idadeAposentarR').value);
+    const rendaMensal = parseMilhar(document.getElementById('rendaMensalR').value);
+    const patrimonioAtual = parseMilhar(document.getElementById('patrimonioAtualR').value);
+    const err = document.getElementById('err-recalc');
+
+    const valido = idadeAtual >= 18 && idadeAtual < EXPECTATIVA_VIDA
+      && idadeAposentar > idadeAtual && idadeAposentar < EXPECTATIVA_VIDA
+      && rendaMensal > 0;
+
+    if (!valido) {
+      err.classList.add('show');
+      return;
+    }
+    err.classList.remove('show');
+
+    computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual);
+    showResult();
+  }
+
+  // Valor futuro de um fluxo: aporte mensal constante + saldo inicial, capitalizado à taxa real mensal r
+  function patrimonioEm(t, P0, aporteMensal, r) {
+    const growth = Math.pow(1 + r, t);
+    return P0 * growth + aporteMensal * (growth - 1) / r;
+  }
+
+  function formatBRL(v) {
+    return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 });
+  }
+
+  function anoTexto(n) { return n === 1 ? 'ano' : 'anos'; }
+
+  // Computa a projeção seguindo o Método Travessia e compara com a idade que a pessoa pediu.
+  function computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual) {
+    const r = R_REAL_MENSAL;
+    const rendaDesejada = rendaMensal * SPEND_METODO;
+    const mesesRetirement = Math.round((EXPECTATIVA_VIDA - idadeAposentar + 1) * 12);
+    const patrimonioNecessario = rendaDesejada * (1 - Math.pow(1 + r, -mesesRetirement)) / r;
+
+    const aporteMetodo = rendaMensal * TAXA_METODO;
+
+    const maxMeses = Math.round((EXPECTATIVA_VIDA - idadeAtual) * 12);
+    let idadeBateMeta = null;
+    const series = [];
+    for (let t = 0; t <= maxMeses; t++) {
+      const patrimonio = patrimonioEm(t, patrimonioAtual, aporteMetodo, r);
+      if (t % 12 === 0) {
+        const fatorInflacao = Math.pow(1 + INFLACAO_MENSAL, t);
+        series.push({
+          idade: idadeAtual + t / 12,
+          patrimonioNominal: patrimonio * fatorInflacao,
+          metaNominal: patrimonioNecessario * fatorInflacao
+        });
+      }
+      if (idadeBateMeta === null && patrimonio >= patrimonioNecessario) {
+        idadeBateMeta = idadeAtual + t / 12;
+      }
+    }
+
+    const mesesAlvo = Math.round((idadeAposentar - idadeAtual) * 12);
+    const fatorInflacaoAlvo = Math.pow(1 + INFLACAO_MENSAL, mesesAlvo);
+    const patrimonioNecessarioNominal = patrimonioNecessario * fatorInflacaoAlvo;
+    const patrimonioNaIdadeAlvoNominal = patrimonioEm(mesesAlvo, patrimonioAtual, aporteMetodo, r) * fatorInflacaoAlvo;
+
+    const candidatos = [idadeAposentar, idadeBateMeta].filter(function (v) { return v !== null && v !== undefined; });
+    if (idadeBateMeta === null) candidatos.push(EXPECTATIVA_VIDA);
+    const maxIdadeChart = Math.min(EXPECTATIVA_VIDA, Math.ceil(Math.max.apply(null, candidatos)) + 3);
+
+    // diferencaAnos > 0 = antecipa (bate a meta antes do que pediu); < 0 = atrasa (bate depois)
+    const diferencaAnos = idadeBateMeta === null ? null : (idadeAposentar - idadeBateMeta);
+
+    lastCalc = {
+      idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual, aporteMetodo,
+      patrimonioNecessario, patrimonioNecessarioNominal, patrimonioNaIdadeAlvoNominal,
+      idadeBateMeta, diferencaAnos, series, maxIdadeChart
+    };
+  }
+
+  function handleCalcular() {
+    const nome = document.getElementById('nome').value.trim();
+    const whatsapp = document.getElementById('whatsapp').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    const err = document.getElementById('err-contato');
+
+    if (!nome || !whatsapp || !emailOk) {
+      err.classList.add('show');
+      return;
+    }
+    err.classList.remove('show');
+
+    const idadeAtual = parseFloat(document.getElementById('idadeAtual').value);
+    const idadeAposentar = parseFloat(document.getElementById('idadeAposentar').value);
+    const rendaMensal = parseMilhar(document.getElementById('rendaMensal').value);
+    const patrimonioAtual = parseMilhar(document.getElementById('patrimonioAtual').value);
+    computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual);
+
+    const btn = document.getElementById('btn-submit');
+    btn.textContent = 'Calculando...';
+    btn.disabled = true;
+
+    const body = new URLSearchParams(Object.assign({
+      nome: nome,
+      whatsapp: whatsapp,
+      email: email,
+      idadeAtual: lastCalc.idadeAtual,
+      idadeAposentar: lastCalc.idadeAposentar,
+      rendaMensal: lastCalc.rendaMensal,
+      patrimonioAtual: lastCalc.patrimonioAtual,
+      patrimonioNecessario: Math.round(lastCalc.patrimonioNecessarioNominal),
+      patrimonioNaIdadeAlvo: Math.round(lastCalc.patrimonioNaIdadeAlvoNominal),
+      idadeBateMeta: lastCalc.idadeBateMeta === null ? '' : Math.round(lastCalc.idadeBateMeta),
+      diferencaAnos: lastCalc.diferencaAnos === null ? '' : Math.round(lastCalc.diferencaAnos),
+      formulario: 'calculadora'
+    }, getUtmParams()));
+
+    fetch(GOOGLE_SCRIPT_URL, { method: 'POST', mode: 'no-cors', body: body })
+      .catch(function () {})
+      .finally(function () {
+        leadCaptured = true;
+        btn.textContent = 'Calcular minha projeção →';
+        btn.disabled = false;
+        showResult();
+      });
+  }
+
+  // Devolve blocos { label, html } — cada um vira um bloco visual separado no "O que percebemos".
+  function gerarDiagnostico(calc) {
+    const blocos = [];
+    blocos.push({
+      label: '⚠️ Isso não acontece sozinho',
+      html: 'A idade que você viu acima <strong>só é alcançada se você seguir uma estratégia estruturada</strong>, guardando o percentual certo da renda e investindo do jeito certo, com consistência mês a mês. Sem isso, os números mudam completamente, e essa aposentadoria pode simplesmente não acontecer.'
+    });
+    blocos.push({
+      label: '💡 Sobre sua meta',
+      html: 'Sua meta de liberdade financeira é ter patrimônio suficiente pra viver com o padrão de vida que o Método Travessia estabelece. <strong>Isso não depende de sorte</strong>. Depende de saber exatamente quanto guardar e onde investir, e é isso que você aprende dentro do Método.'
+    });
+
+    if (calc.idadeBateMeta === null) {
+      blocos.push({
+        label: '⚠️ Um alerta importante',
+        html: 'Nesse ritmo, <strong>mesmo seguindo o Método Travessia, sua meta não seria batida antes dos ' + EXPECTATIVA_VIDA + ' anos</strong>. Vale rever os números com calma ou buscar orientação personalizada.'
+      });
+    } else if (calc.diferencaAnos >= 0.5) {
+      const n = Math.round(calc.diferencaAnos);
+      blocos.push({
+        label: '🎉 Você pode ir mais rápido',
+        html: 'Pelo seu ritmo de renda e patrimônio hoje, <strong>se você seguir o Método Travessia com consistência</strong>, ele pode te levar à liberdade financeira ' + n + ' ' + anoTexto(n) + ' antes do que você pediu.'
+      });
+    } else if (calc.diferencaAnos <= -0.5) {
+      blocos.push({
+        label: '⚠️ Um ajuste importante',
+        html: 'No seu ritmo atual de renda e patrimônio, <strong>é isso que o Método Travessia projeta pra você</strong>. Pequenos ajustes em quanto guardar e onde investir podem mudar esse resultado, mas o Método só funciona se for aplicado com consistência.'
+      });
+    } else {
+      blocos.push({
+        label: '✅ Bem na medida',
+        html: 'Pelo seu ritmo de renda e patrimônio hoje, <strong>se você seguir o Método Travessia à risca</strong>, ele te leva à liberdade financeira bem na idade que você pediu.'
+      });
+    }
+
+    blocos.push({
+      label: '🚨 O risco de não ter um método',
+      html: 'Sem uma estratégia clara, é comum passar dos ' + EXPECTATIVA_VIDA + ' anos sem conseguir se aposentar de verdade, não por falta de renda, mas por falta de direção. Construir patrimônio <strong>não depende apenas de investir melhor</strong>. Depende principalmente de <strong>ter direção e seguir ela até o fim</strong>.'
+    });
+
+    return blocos;
+  }
+
+  function showResult() {
+    const calc = lastCalc;
+
+    const heroLabel = document.getElementById('hero-label');
+    const heroValor = document.getElementById('hero-valor');
+    const heroSub = document.getElementById('hero-sub');
+    const resultSummary = document.getElementById('result-summary');
+
+    if (calc.idadeBateMeta === null) {
+      resultSummary.textContent = 'Veja o que o Método Travessia projeta pra você, se seguido com consistência.';
+      heroLabel.textContent = 'Nesse ritmo, sua meta não seria batida';
+      heroValor.textContent = 'antes dos ' + EXPECTATIVA_VIDA + ' anos';
+      heroSub.textContent = 'mesmo seguindo o Método Travessia. Vale rever os números ou buscar orientação personalizada.';
+    } else if (calc.diferencaAnos >= 0.5) {
+      const n = Math.round(calc.diferencaAnos);
+      resultSummary.textContent = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Veja o que o Método Travessia projeta pra você, se seguido com consistência.';
+      heroLabel.innerHTML = '<strong>Se você seguir o Método Travessia com consistência</strong>, pode antecipar sua aposentadoria em';
+      heroValor.textContent = n + ' ' + anoTexto(n);
+      heroSub.textContent = 'você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Seguindo o Método à risca, isso pode acontecer aos ' + Math.round(calc.idadeBateMeta) + ' anos';
+    } else if (calc.diferencaAnos <= -0.5) {
+      resultSummary.textContent = 'Veja o que o Método Travessia projeta pra você, se seguido com consistência.';
+      heroLabel.innerHTML = '<strong>Se você seguir o Método Travessia com consistência</strong>, sua aposentadoria pode acontecer aos';
+      heroValor.textContent = Math.round(calc.idadeBateMeta) + ' anos';
+      heroSub.textContent = 'Sem um método estruturado, é provável que você não consiga se aposentar nem aos ' + EXPECTATIVA_VIDA + ' anos.';
+    } else {
+      resultSummary.textContent = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Veja o que o Método Travessia projeta pra você, se seguido com consistência.';
+      heroLabel.innerHTML = '<strong>Se você seguir o Método Travessia com consistência</strong>, bate sua meta bem na idade que pediu:';
+      heroValor.textContent = Math.round(calc.idadeBateMeta) + ' anos';
+      heroSub.textContent = 'isso só vale enquanto a estratégia for seguida à risca, mês a mês';
+    }
+
+    document.getElementById('assumptions-note').textContent =
+      'Premissas: patrimônio necessário calculado com base no padrão de vida do Método Travessia. ' +
+      'Rentabilidade real de ' + (R_REAL_ANUAL * 100).toFixed(0) +
+      '% ao ano (acima da inflação), inflação de ' + (INFLACAO_ANUAL * 100).toFixed(0) +
+      '% ao ano, expectativa de vida considerada até os ' + EXPECTATIVA_VIDA +
+      ' anos, sem herança. Os valores já são em reais nominais: o que você' +
+      ' realmente vai ver na corretora na idade indicada, não em poder de compra de hoje.';
+
+    document.getElementById('explicacao-resultado').innerHTML = explicacaoTexto(calc);
+
+    const diagBox = document.getElementById('diagnostico-box');
+    diagBox.innerHTML = gerarDiagnostico(calc).map(function (b) {
+      return '<div class="diagnostico-block"><div class="diagnostico-block-label">' + b.label + '</div><p>' + b.html + '</p></div>';
+    }).join('');
+
+    // Barra fixa de parâmetros no topo do resultado, pronta pra recalcular sem sair da tela.
+    document.getElementById('idadeAtualR').value = calc.idadeAtual;
+    document.getElementById('idadeAposentarR').value = calc.idadeAposentar;
+    document.getElementById('rendaMensalR').value = calc.rendaMensal.toLocaleString('pt-BR');
+    document.getElementById('patrimonioAtualR').value = calc.patrimonioAtual.toLocaleString('pt-BR');
+
+    renderChart(calc);
+
+    document.getElementById('form-section').style.display = 'none';
+    const resultado = document.getElementById('resultado');
+    resultado.style.display = 'block';
+    resultado.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // Explicação visual do resultado (stat cards), complementando o gráfico.
+  function explicacaoTexto(calc) {
+    const idadeRealValor = calc.idadeBateMeta === null
+      ? 'não antes dos ' + EXPECTATIVA_VIDA + ' anos'
+      : Math.round(calc.idadeBateMeta) + ' anos';
+
+    const cards = [
+      { icon: '💰', label: 'Hoje você tem guardado', value: formatBRL(calc.patrimonioAtual) },
+      { icon: '🎯', label: 'Patrimônio necessário aos ' + calc.idadeAposentar + ' anos', value: formatBRL(calc.patrimonioNecessarioNominal) },
+      { icon: '📅', label: 'Sua idade real de aposentadoria', value: idadeRealValor, accent: true }
+    ];
+
+    let nota;
+    if (calc.idadeBateMeta === null) {
+      nota = 'Mesmo <strong>se você seguir</strong> o Método Travessia, no seu ritmo atual essa meta não seria alcançada dentro da expectativa de vida considerada.';
+    } else if (calc.diferencaAnos >= 0.5) {
+      const n = Math.round(calc.diferencaAnos);
+      nota = '<strong>Se você seguir</strong> o Método Travessia com consistência, você pode chegar lá ' + n + ' ' + anoTexto(n) + ' antes do que imaginava. Isso não é automático, é o resultado de aplicar a estratégia mês a mês.';
+    } else if (calc.diferencaAnos <= -0.5) {
+      nota = '<strong>Se você seguir</strong> o Método Travessia com consistência, essa é a idade real que a estratégia entrega no seu ritmo atual. Isso não é automático, é o resultado de aplicar a estratégia mês a mês, e dá pra mudar essa trajetória com os ajustes certos.';
+    } else {
+      nota = 'Seu ritmo atual já está bem alinhado com essa meta, <strong>desde que a estratégia seja mantida</strong> mês a mês.';
+    }
+
+    const cardsHtml = cards.map(function (c) {
+      return '<div class="stat-card"><div class="stat-card-icon">' + c.icon + '</div><div class="stat-card-label">' + c.label + '</div><div class="stat-card-value' + (c.accent ? ' accent' : '') + '">' + c.value + '</div></div>';
+    }).join('');
+
+    return '<div class="stats-grid">' + cardsHtml + '</div><p class="explicacao-nota">' + nota + '</p>';
+  }
+
+  // Plugin simples do Chart.js: desenha um emoji no ponto certo do gráfico — 🎯 pra idade
+  // pedida, 🏁 pra idade em que a meta é batida de verdade — sem precisar de lib de anotação.
+  const marcosPlugin = {
+    id: 'marcosLiberdade',
+    afterDatasetsDraw: function (chart) {
+      const ctx = chart.ctx;
+      const marcos = chart.config._marcosLiberdade || [];
+      marcos.forEach(function (m) {
+        const xScale = chart.scales.x;
+        const yScale = chart.scales.y;
+        if (m.idade === null || m.idade === undefined || m.valor === null) return;
+        const idades = chart.data.labels;
+        let closestIndex = 0;
+        let closestDiff = Infinity;
+        idades.forEach(function (idade, i) {
+          const diff = Math.abs(idade - m.idade);
+          if (diff < closestDiff) { closestDiff = diff; closestIndex = i; }
+        });
+        const x = xScale.getPixelForValue(closestIndex);
+        const y = yScale.getPixelForValue(m.valor);
+        ctx.save();
+        ctx.font = '16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'bottom';
+        ctx.fillText(m.emoji, x, y - 6);
+        ctx.restore();
+      });
+    }
+  };
+
+  function valorMetaEm(idade, calc) {
+    const t = Math.round((idade - calc.idadeAtual) * 12);
+    return calc.patrimonioNecessario * Math.pow(1 + INFLACAO_MENSAL, t);
+  }
+
+  function renderChart(calc) {
+    const maxIdadeChart = calc.maxIdadeChart;
+    const serieCortada = calc.series.filter(function (p) { return p.idade <= maxIdadeChart; });
+
+    const idades = serieCortada.map(function (p) { return Math.round(p.idade); });
+    const dataMetodo = serieCortada.map(function (p) { return Math.round(p.patrimonioNominal); });
+    const meta = serieCortada.map(function (p) { return Math.round(p.metaNominal); });
+
+    const ctx = document.getElementById('chart').getContext('2d');
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: idades,
+        datasets: [
+          {
+            label: 'Método Travessia',
+            data: dataMetodo,
+            borderColor: COR_METODO.linha,
+            backgroundColor: COR_METODO.fundo,
+            fill: true,
+            tension: 0.25,
+            pointRadius: 0,
+            borderWidth: 2.5
+          },
+          {
+            label: 'Meta de liberdade financeira',
+            data: meta,
+            borderColor: '#C7C7CC',
+            borderDash: [5, 5],
+            borderWidth: 1.5,
+            pointRadius: 0,
+            fill: false
+          }
+        ]
+      },
+      plugins: [marcosPlugin],
+      options: {
+        responsive: true,
+        interaction: { mode: 'index', intersect: false },
+        plugins: {
+          title: {
+            display: true,
+            text: '📈 Evolução do seu patrimônio seguindo o Método Travessia',
+            color: '#1C1C1E',
+            font: { size: 13.5, weight: '700' },
+            padding: { bottom: 14 }
+          },
+          legend: {
+            position: 'bottom',
+            labels: { boxWidth: 12, font: { size: 10.5 }, color: '#6C6C70' }
+          },
+          tooltip: {
+            callbacks: {
+              label: function (item) {
+                return item.dataset.label + ': ' + formatBRL(item.parsed.y);
+              }
+            }
+          }
+        },
+        scales: {
+          x: { title: { display: true, text: 'Idade', color: '#8E8E93', font: { size: 11 } }, ticks: { color: '#8E8E93', font: { size: 10.5 } }, grid: { display: false } },
+          y: {
+            ticks: {
+              color: '#8E8E93',
+              font: { size: 10.5 },
+              callback: function (v) { return (v / 1000000).toFixed(1) + 'M'; }
+            },
+            grid: { color: '#EDEDED' }
+          }
+        }
+      }
+    });
+
+    // Se a aposentadoria real só acontece depois da idade pedida (ou nem acontece), não marca
+    // a idade pedida no gráfico nem cita ela na legenda: só mostra o resultado real.
+    const isAtraso = calc.idadeBateMeta === null || calc.diferencaAnos <= -0.5;
+
+    const marcos = [];
+    if (!isAtraso) {
+      marcos.push({ idade: calc.idadeAposentar, valor: valorMetaEm(calc.idadeAposentar, calc), emoji: '🎯' });
+    }
+    if (calc.idadeBateMeta !== null) {
+      marcos.push({ idade: calc.idadeBateMeta, valor: valorMetaEm(calc.idadeBateMeta, calc), emoji: '🏁' });
+    }
+    chartInstance.config._marcosLiberdade = marcos;
+    chartInstance.update();
+
+    let legenda = '📈 A linha verde é o seu patrimônio seguindo o Método Travessia. A linha pontilhada é a meta.';
+    if (!isAtraso) legenda += ' 🎯 marca a idade que você pediu pra se aposentar.';
+    if (calc.idadeBateMeta !== null) legenda += ' 🏁 marca a idade em que a meta é batida de verdade.';
+    document.getElementById('chart-legend-note').textContent = legenda;
+  }
+</script>
+
+</body>
+</html>
