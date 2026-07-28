@@ -1,7 +1,7 @@
 /**
  * Apps Script vinculado à planilha "Iscas Travessia - captura".
  * Uma planilha só tem UM script vinculado — este arquivo é o ÚNICO Code.gs
- * publicado, e atende Quiz, Checklist e Calculadora ao mesmo tempo,
+ * publicado, e atende Quiz, Checklist, Calculadora e Sorteio ao mesmo tempo,
  * roteando pelo campo "formulario" que cada página envia.
  *
  * DEPLOY (atualizar o que já existe, não criar um novo):
@@ -9,11 +9,11 @@
  * 2. Apague o conteúdo de Code.gs e cole este arquivo inteiro.
  * 3. Deploy → Gerenciar implantações → ícone de lápis na implantação ativa
  *    → Versão: "Nova versão" → Implantar.
- *    (Isso mantém a MESMA URL que quiz, checklist e calculadora já usam —
+ *    (Isso mantém a MESMA URL que quiz, checklist, calculadora e sorteio já usam —
  *    não precisa mexer no GOOGLE_SCRIPT_URL de nenhuma das páginas.)
  *
- * Esse mesmo arquivo está duplicado nas pastas Quiz Diagnóstico/, Checklist/
- * e Calculadora/ só pra ficar fácil de achar. Se editar, atualize os 3.
+ * Esse mesmo arquivo está duplicado nas pastas Quiz Diagnóstico/, Checklist/,
+ * Calculadora/ e Sorteio Live/ só pra ficar fácil de achar. Se editar, atualize os 4.
  *
  * UTM: cada página captura utm_source/medium/campaign/content/term da URL
  * (query string) e manda junto no POST. As 5 colunas de UTM são adicionadas
@@ -40,15 +40,32 @@ function doPost(e) {
     appendRow(ss, 'Calculadora',
       [
         'Data/Hora', 'Nome', 'WhatsApp', 'E-mail',
-        'Idade atual', 'Idade quer aposentar', 'Renda mensal', 'Patrimônio atual',
+        'Idade atual', 'Idade quer aposentar', 'Renda mensal', 'Patrimônio atual', 'Já aplica estratégia?',
         'Patrimônio necessário (nominal)', 'Patrimônio na idade-alvo (nominal)',
         'Idade que bate a meta', 'Diferença de anos (positivo = antecipa, negativo = atrasa)'
       ].concat(UTM_HEADERS),
       [
         new Date(), data.nome || '', data.whatsapp || '', data.email || '',
-        data.idadeAtual || '', data.idadeAposentar || '', data.rendaMensal || '', data.patrimonioAtual || '',
+        data.idadeAtual || '', data.idadeAposentar || '', data.rendaMensal || '', data.patrimonioAtual || '', data.jaTemEstrategia || '',
         data.patrimonioNecessario || '', data.patrimonioNaIdadeAlvo || '',
         data.idadeBateMeta || '', data.diferencaAnos || ''
+      ].concat(utm)
+    );
+  } else if (data.formulario === 'sorteio') {
+    appendRow(ss, 'Sorteio',
+      [
+        'Data/Hora', 'Nome', 'WhatsApp', 'E-mail',
+        'Faixa de renda', 'Onde conheceu', 'Onde conheceu (Outro)',
+        'Situações (marcadas)', 'Objetivo principal', 'Objetivo principal (Outro)',
+        'Chance de entrar (0-10)', 'O que faz acreditar (8-10)', 'O que impediria (0-7)',
+        'Pergunta sobre dinheiro'
+      ].concat(UTM_HEADERS),
+      [
+        new Date(), data.nome || '', data.whatsapp || '', data.email || '',
+        data.renda || '', data.origem || '', data.origemOutro || '',
+        data.situacoes || '', data.objetivo || '', data.objetivoOutro || '',
+        data.chanceEntrada || '', data.motivoAcredita || '', data.motivoImpede || '',
+        data.perguntaDinheiro || ''
       ].concat(utm)
     );
   } else {

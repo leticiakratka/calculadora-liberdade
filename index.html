@@ -330,7 +330,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     color: #6C6C70;
     margin-bottom: 4px;
   }
-  .resultado-sticky-fields input {
+  .resultado-sticky-fields input, .resultado-sticky-fields select {
     width: 100%;
     padding: 9px 10px;
     border: 1.5px solid #E8E8E8;
@@ -340,7 +340,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     background: #FAFAFA;
     outline: none;
   }
-  .resultado-sticky-fields input:focus { border-color: #1C1C1E; background: #fff; }
+  .resultado-sticky-fields input:focus, .resultado-sticky-fields select:focus { border-color: #1C1C1E; background: #fff; }
   .btn-recalcular { margin-top: 4px; padding: 12px; font-size: 14px; }
 
   .explicacao-resultado { margin-bottom: 24px; }
@@ -422,6 +422,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     border-radius: 16px;
     padding: 24px 20px;
     margin-bottom: 24px;
+    display: flex;
+    flex-direction: column;
   }
   .hero-antecipa-label {
     font-size: 13px;
@@ -443,6 +445,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     margin-top: 8px;
     line-height: 1.5;
   }
+  .hero-antecipa-sub.hero-antecipa-sub-risk {
+    font-size: 15.5px;
+    font-weight: 700;
+    color: #B3261E;
+    line-height: 1.4;
+  }
   .hero-antecipa-disclaimer {
     font-size: 11.5px;
     color: #8E8E93;
@@ -450,6 +458,18 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     line-height: 1.5;
     border-top: 1px dashed #E9D9A0;
     padding-top: 10px;
+  }
+  .hero-antecipa-disclaimer.hero-antecipa-disclaimer-alert {
+    order: -1;
+    background: #FDECEA;
+    border: 1.5px solid #E4A199;
+    border-radius: 10px;
+    color: #7A1F16;
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 12px 14px;
+    margin: 0 0 16px;
   }
 
   .chart-legend-note {
@@ -632,8 +652,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <input type="text" inputmode="numeric" id="patrimonioAtual" placeholder="0" oninput="formatarMilhar(this)">
         <div class="field-sub">Pode deixar 0 se ainda não tem nada guardado.</div>
       </div>
+      <div class="field">
+        <label>Você já aplica uma estratégia de construção de patrimônio?</label>
+        <select id="jaTemEstrategia">
+          <option value="">Selecione...</option>
+          <option value="sim">Sim, já aplico uma estratégia</option>
+          <option value="nao">Não, ainda não aplico</option>
+        </select>
+      </div>
 
-      <p class="error-msg" id="err-dados">Confere os números: a idade de se aposentar precisa ser maior que a idade atual (e menor que 90), e a renda precisa ser maior que zero.</p>
+      <p class="error-msg" id="err-dados">Confere os números: a idade de se aposentar precisa ser maior que a idade atual (e menor que 90), a renda precisa ser maior que zero, e é só selecionar se você já aplica uma estratégia.</p>
       <button class="btn btn-cta-calc" onclick="validateDados()">Continuar →</button>
     </div>
 
@@ -666,6 +694,16 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
         <div><label>Renda mensal</label><input type="text" inputmode="numeric" id="rendaMensalR" oninput="formatarMilhar(this)"></div>
         <div><label>Já guardado/investido</label><input type="text" inputmode="numeric" id="patrimonioAtualR" oninput="formatarMilhar(this)"></div>
       </div>
+      <div class="resultado-sticky-fields" style="grid-template-columns: 1fr;">
+        <div>
+          <label>Você já aplica uma estratégia de construção de patrimônio?</label>
+          <select id="jaTemEstrategiaR">
+            <option value="">Selecione...</option>
+            <option value="sim">Sim, já aplico uma estratégia</option>
+            <option value="nao">Não, ainda não aplico</option>
+          </select>
+        </div>
+      </div>
       <p class="error-msg" id="err-recalc">Confere os números antes de recalcular.</p>
       <button class="btn btn-cta-calc btn-recalcular" onclick="recalcular()">Recalcular →</button>
     </div>
@@ -680,7 +718,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="hero-antecipa-label" id="hero-label"></div>
       <div class="hero-antecipa-value" id="hero-valor"></div>
       <div class="hero-antecipa-sub" id="hero-sub"></div>
-      <div class="hero-antecipa-disclaimer">⚠️ Essa idade só acontece se você seguir uma estratégia estruturada de aporte e investimento, que vamos te ensinar, com consistência. Sem isso, os números mudam completamente.</div>
+      <div class="hero-antecipa-disclaimer" id="hero-disclaimer"></div>
     </div>
 
     <div class="explicacao-resultado" id="explicacao-resultado"></div>
@@ -772,11 +810,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const idadeAtual = parseFloat(document.getElementById('idadeAtual').value);
     const idadeAposentar = parseFloat(document.getElementById('idadeAposentar').value);
     const rendaMensal = parseMilhar(document.getElementById('rendaMensal').value);
+    const jaTemEstrategia = document.getElementById('jaTemEstrategia').value;
     const err = document.getElementById('err-dados');
 
     const valido = idadeAtual >= 0 && idadeAtual < EXPECTATIVA_VIDA
       && idadeAposentar > idadeAtual && idadeAposentar < EXPECTATIVA_VIDA
-      && rendaMensal > 0;
+      && rendaMensal > 0 && jaTemEstrategia !== '';
 
     if (!valido) {
       err.classList.add('show');
@@ -788,7 +827,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     // só recalcula e mostra o resultado direto, sem pedir nome/e-mail de novo.
     if (leadCaptured) {
       const patrimonioAtual = parseMilhar(document.getElementById('patrimonioAtual').value);
-      computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual);
+      computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual, jaTemEstrategia);
       showResult();
     } else {
       document.getElementById('dados-step').style.display = 'none';
@@ -814,11 +853,12 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const idadeAposentar = parseFloat(document.getElementById('idadeAposentarR').value);
     const rendaMensal = parseMilhar(document.getElementById('rendaMensalR').value);
     const patrimonioAtual = parseMilhar(document.getElementById('patrimonioAtualR').value);
+    const jaTemEstrategia = document.getElementById('jaTemEstrategiaR').value;
     const err = document.getElementById('err-recalc');
 
     const valido = idadeAtual >= 0 && idadeAtual < EXPECTATIVA_VIDA
       && idadeAposentar > idadeAtual && idadeAposentar < EXPECTATIVA_VIDA
-      && rendaMensal > 0;
+      && rendaMensal > 0 && jaTemEstrategia !== '';
 
     if (!valido) {
       err.classList.add('show');
@@ -826,7 +866,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     }
     err.classList.remove('show');
 
-    computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual);
+    computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual, jaTemEstrategia);
     showResult();
   }
 
@@ -843,7 +883,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   function anoTexto(n) { return n === 1 ? 'ano' : 'anos'; }
 
   // Computa a projeção seguindo o Método Travessia e compara com a idade que a pessoa pediu.
-  function computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual) {
+  function computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual, jaTemEstrategia) {
     const r = R_REAL_MENSAL;
     const rendaDesejada = rendaMensal * SPEND_METODO;
     const mesesRetirement = Math.round((EXPECTATIVA_VIDA - idadeAposentar + 1) * 12);
@@ -882,7 +922,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const diferencaAnos = idadeBateMeta === null ? null : (idadeAposentar - idadeBateMeta);
 
     lastCalc = {
-      idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual, aporteMetodo,
+      idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual, aporteMetodo, jaTemEstrategia,
       patrimonioNecessario, patrimonioNecessarioNominal, patrimonioNaIdadeAlvoNominal,
       idadeBateMeta, diferencaAnos, series, maxIdadeChart
     };
@@ -905,7 +945,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const idadeAposentar = parseFloat(document.getElementById('idadeAposentar').value);
     const rendaMensal = parseMilhar(document.getElementById('rendaMensal').value);
     const patrimonioAtual = parseMilhar(document.getElementById('patrimonioAtual').value);
-    computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual);
+    const jaTemEstrategia = document.getElementById('jaTemEstrategia').value;
+    computeResults(idadeAtual, idadeAposentar, rendaMensal, patrimonioAtual, jaTemEstrategia);
 
     const btn = document.getElementById('btn-submit');
     btn.textContent = 'Calculando...';
@@ -919,6 +960,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       idadeAposentar: lastCalc.idadeAposentar,
       rendaMensal: lastCalc.rendaMensal,
       patrimonioAtual: lastCalc.patrimonioAtual,
+      jaTemEstrategia: lastCalc.jaTemEstrategia,
       patrimonioNecessario: Math.round(lastCalc.patrimonioNecessarioNominal),
       patrimonioNaIdadeAlvo: Math.round(lastCalc.patrimonioNaIdadeAlvoNominal),
       idadeBateMeta: lastCalc.idadeBateMeta === null ? '' : Math.round(lastCalc.idadeBateMeta),
@@ -991,24 +1033,56 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       resultSummary.innerHTML = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Com a régua padrão d<u>o Método Travessia</u> (guardar 20% da renda), essa meta específica ainda não fecha. Veja o que ajustar.';
       heroLabel.textContent = 'Com a régua padrão, essa meta não fecha antes dos';
       heroValor.textContent = EXPECTATIVA_VIDA + ' anos';
+      heroSub.classList.remove('hero-antecipa-sub-risk');
       heroSub.innerHTML = 'isso não é <u>o Método Travessia</u> falhando, é essa meta pedindo mais do que a régua padrão de 20%. O ajuste existe: guardar mais, investir melhor, ou recalibrar o prazo com realismo, e é isso que a orientação personalizada calibra.';
     } else if (calc.diferencaAnos >= 0.5) {
       const n = Math.round(calc.diferencaAnos);
       resultSummary.innerHTML = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Veja o que <u>o Método Travessia</u> projeta pra você, se seguido com consistência.';
-      heroLabel.innerHTML = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, pode antecipar sua aposentadoria em';
+      heroLabel.innerHTML = '<strong>Se você seguir <u>o Método Travessia</u> com consistência,</strong><br>pode antecipar sua aposentadoria em';
       heroValor.textContent = n + ' ' + anoTexto(n);
+      heroSub.classList.remove('hero-antecipa-sub-risk');
       heroSub.innerHTML = 'você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Seguindo <u>o Método</u> à risca, isso pode acontecer aos ' + Math.round(calc.idadeBateMeta) + ' anos';
     } else if (calc.diferencaAnos <= -0.5) {
       resultSummary.innerHTML = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. No ritmo de hoje, sem estratégia, esse prazo está em risco real. Veja o que muda se você seguir <u>o Método Travessia</u> com consistência.';
-      heroLabel.innerHTML = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, sua aposentadoria pode acontecer aos';
+      heroLabel.innerHTML = '<strong>Se você seguir <u>o Método Travessia</u> com consistência,</strong><br>sua aposentadoria pode acontecer aos';
       heroValor.textContent = Math.round(calc.idadeBateMeta) + ' anos';
+      heroSub.classList.add('hero-antecipa-sub-risk');
       heroSub.innerHTML = 'Sem uma estratégia estruturada a partir de agora, o risco é real: chegar aos ' + EXPECTATIVA_VIDA + ' anos sem ter se aposentado de verdade. A boa notícia é que dá pra virar esse jogo, é isso que <u>o Método Travessia</u> estrutura pra você.';
     } else {
       resultSummary.innerHTML = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Veja o que <u>o Método Travessia</u> projeta pra você, se seguido com consistência.';
-      heroLabel.innerHTML = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, bate sua meta bem na idade que pediu:';
+      heroLabel.innerHTML = '<strong>Se você seguir <u>o Método Travessia</u> com consistência,</strong><br>bate sua meta bem na idade que pediu:';
+      heroSub.classList.remove('hero-antecipa-sub-risk');
       heroValor.textContent = Math.round(calc.idadeBateMeta) + ' anos';
       heroSub.textContent = 'isso só vale enquanto a estratégia for seguida à risca, mês a mês';
     }
+
+    // Quem ainda não aplica nenhuma estratégia vê o mesmo alerta de risco, independente do cenário calculado.
+    if (calc.jaTemEstrategia === 'nao') {
+      heroSub.classList.add('hero-antecipa-sub-risk');
+      heroSub.innerHTML = 'Sem uma estratégia estruturada a partir de agora, o risco é real: chegar aos ' + EXPECTATIVA_VIDA + ' anos sem ter se aposentado de verdade. A boa notícia é que dá pra virar esse jogo, é isso que <u>o Método Travessia</u> estrutura pra você.';
+    }
+
+    const semReserva = calc.patrimonioAtual <= 0;
+    const semEstrategia = calc.jaTemEstrategia === 'nao';
+    const atrasada = calc.idadeBateMeta === null || calc.diferencaAnos < 0;
+    const alertaForte = semReserva || semEstrategia || atrasada;
+
+    const heroDisclaimer = document.getElementById('hero-disclaimer');
+    heroDisclaimer.classList.toggle('hero-antecipa-disclaimer-alert', alertaForte);
+
+    let disclaimerHtml;
+    if (semEstrategia && semReserva) {
+      disclaimerHtml = '⚠️ Atenção: hoje você não tem nada guardado e ainda não aplica uma estratégia. Esse resultado só existe se você sair do zero agora e seguir <u>o Método Travessia</u> com consistência. Sem isso, é provável que sua aposentadoria não chegue nesse prazo.';
+    } else if (semEstrategia) {
+      disclaimerHtml = '⚠️ Atenção: essa projeção considera que você vai seguir <u>o Método Travessia</u> daqui pra frente. Caso contrário, é provável que sua aposentadoria não chegue nesse prazo.';
+    } else if (semReserva) {
+      disclaimerHtml = '⚠️ Atenção: hoje você não tem nada guardado. Esse resultado só acontece se você seguir <u>o Método Travessia</u> com consistência a partir de agora.';
+    } else if (atrasada) {
+      disclaimerHtml = '⚠️ Atenção: no ritmo atual, é provável que sua aposentadoria não chegue no prazo que você pediu. Seguir <u>o Método Travessia</u> com consistência é o que muda essa trajetória.';
+    } else {
+      disclaimerHtml = '⚠️ Essa idade só acontece se você seguir uma estratégia estruturada de aporte e investimento, que vamos te ensinar, com consistência. Sem isso, os números mudam completamente.';
+    }
+    heroDisclaimer.innerHTML = disclaimerHtml;
 
     document.getElementById('assumptions-note').textContent =
       'Premissas: patrimônio necessário calculado com base no padrão de vida do Método Travessia. ' +
@@ -1030,6 +1104,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     document.getElementById('idadeAposentarR').value = calc.idadeAposentar;
     document.getElementById('rendaMensalR').value = calc.rendaMensal.toLocaleString('pt-BR');
     document.getElementById('patrimonioAtualR').value = calc.patrimonioAtual.toLocaleString('pt-BR');
+    document.getElementById('jaTemEstrategiaR').value = calc.jaTemEstrategia;
 
     renderChart(calc);
 
