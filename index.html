@@ -623,8 +623,8 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <p class="question-hint">Não precisa ser exato. Um valor aproximado já é suficiente pra ver sua tendência real.</p>
 
       <div class="field-row">
-        <div class="field"><label>Idade atual</label><input type="number" id="idadeAtual" placeholder="35" min="18" max="85"></div>
-        <div class="field"><label>Idade que quer se aposentar</label><input type="number" id="idadeAposentar" placeholder="60" min="19" max="89"></div>
+        <div class="field"><label>Idade atual</label><input type="number" id="idadeAtual" placeholder="35" min="0" max="85"></div>
+        <div class="field"><label>Idade que quer se aposentar</label><input type="number" id="idadeAposentar" placeholder="60" min="1" max="89"></div>
       </div>
       <div class="field"><label>Renda mensal líquida</label><input type="text" inputmode="numeric" id="rendaMensal" placeholder="8.000" oninput="formatarMilhar(this)"></div>
       <div class="field">
@@ -774,7 +774,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const rendaMensal = parseMilhar(document.getElementById('rendaMensal').value);
     const err = document.getElementById('err-dados');
 
-    const valido = idadeAtual >= 18 && idadeAtual < EXPECTATIVA_VIDA
+    const valido = idadeAtual >= 0 && idadeAtual < EXPECTATIVA_VIDA
       && idadeAposentar > idadeAtual && idadeAposentar < EXPECTATIVA_VIDA
       && rendaMensal > 0;
 
@@ -816,7 +816,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const patrimonioAtual = parseMilhar(document.getElementById('patrimonioAtualR').value);
     const err = document.getElementById('err-recalc');
 
-    const valido = idadeAtual >= 18 && idadeAtual < EXPECTATIVA_VIDA
+    const valido = idadeAtual >= 0 && idadeAtual < EXPECTATIVA_VIDA
       && idadeAposentar > idadeAtual && idadeAposentar < EXPECTATIVA_VIDA
       && rendaMensal > 0;
 
@@ -951,23 +951,23 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     if (calc.idadeBateMeta === null) {
       blocos.push({
         label: '⚠️ Um alerta importante',
-        html: 'Nesse ritmo, <strong>mesmo seguindo o Método Travessia, sua meta não seria batida antes dos ' + EXPECTATIVA_VIDA + ' anos</strong>. Vale rever os números com calma ou buscar orientação personalizada.'
+        html: 'Com a régua padrão de guardar 20% da renda, essa meta específica ainda não fecha antes dos ' + EXPECTATIVA_VIDA + ' anos. <strong>Isso não é <u>o Método Travessia</u> falhando</strong>: é sinal de que o ajuste precisa ser maior, guardar mais, investir melhor, ou recalibrar o prazo com realismo. É pra isso que existe a orientação personalizada.'
       });
     } else if (calc.diferencaAnos >= 0.5) {
       const n = Math.round(calc.diferencaAnos);
       blocos.push({
         label: '🎉 Você pode ir mais rápido',
-        html: 'Pelo seu ritmo de renda e patrimônio hoje, <strong>se você seguir o Método Travessia com consistência</strong>, ele pode te levar à liberdade financeira ' + n + ' ' + anoTexto(n) + ' antes do que você pediu.'
+        html: 'Pelo seu ritmo de renda e patrimônio hoje, <strong>se você seguir <u>o Método Travessia</u> com consistência</strong>, ele pode te levar à liberdade financeira ' + n + ' ' + anoTexto(n) + ' antes do que você pediu.'
       });
     } else if (calc.diferencaAnos <= -0.5) {
       blocos.push({
-        label: '⚠️ Um ajuste importante',
-        html: 'No seu ritmo atual de renda e patrimônio, <strong>é isso que o Método Travessia projeta pra você</strong>. Pequenos ajustes em quanto guardar e onde investir podem mudar esse resultado, mas o Método só funciona se for aplicado com consistência.'
+        label: '⚠️ Um risco real, mas reversível',
+        html: 'Ter pouco ou nada guardado até essa idade não é um detalhe, é um risco real de chegar mais velho sem ter construído a liberdade financeira que você quer. <strong>A boa notícia é que isso pode ser revertido</strong>: começando a aplicar <u>o Método Travessia</u> agora, guardando e investindo o percentual certo da renda com consistência, você já muda essa trajetória. Quanto antes começar, menor a distância até a idade que pediu.'
       });
     } else {
       blocos.push({
         label: '✅ Bem na medida',
-        html: 'Pelo seu ritmo de renda e patrimônio hoje, <strong>se você seguir o Método Travessia à risca</strong>, ele te leva à liberdade financeira bem na idade que você pediu.'
+        html: 'Pelo seu ritmo de renda e patrimônio hoje, <strong>se você seguir <u>o Método Travessia</u> à risca</strong>, ele te leva à liberdade financeira bem na idade que você pediu.'
       });
     }
 
@@ -988,24 +988,24 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     const resultSummary = document.getElementById('result-summary');
 
     if (calc.idadeBateMeta === null) {
-      resultSummary.textContent = 'Veja o que o Método Travessia projeta pra você, se seguido com consistência.';
-      heroLabel.textContent = 'Nesse ritmo, sua meta não seria batida';
-      heroValor.textContent = 'antes dos ' + EXPECTATIVA_VIDA + ' anos';
-      heroSub.textContent = 'mesmo seguindo o Método Travessia. Vale rever os números ou buscar orientação personalizada.';
+      resultSummary.innerHTML = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Com a régua padrão d<u>o Método Travessia</u> (guardar 20% da renda), essa meta específica ainda não fecha. Veja o que ajustar.';
+      heroLabel.textContent = 'Com a régua padrão, essa meta não fecha antes dos';
+      heroValor.textContent = EXPECTATIVA_VIDA + ' anos';
+      heroSub.innerHTML = 'isso não é <u>o Método Travessia</u> falhando, é essa meta pedindo mais do que a régua padrão de 20%. O ajuste existe: guardar mais, investir melhor, ou recalibrar o prazo com realismo, e é isso que a orientação personalizada calibra.';
     } else if (calc.diferencaAnos >= 0.5) {
       const n = Math.round(calc.diferencaAnos);
-      resultSummary.textContent = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Veja o que o Método Travessia projeta pra você, se seguido com consistência.';
-      heroLabel.innerHTML = '<strong>Se você seguir o Método Travessia com consistência</strong>, pode antecipar sua aposentadoria em';
+      resultSummary.innerHTML = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Veja o que <u>o Método Travessia</u> projeta pra você, se seguido com consistência.';
+      heroLabel.innerHTML = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, pode antecipar sua aposentadoria em';
       heroValor.textContent = n + ' ' + anoTexto(n);
-      heroSub.textContent = 'você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Seguindo o Método à risca, isso pode acontecer aos ' + Math.round(calc.idadeBateMeta) + ' anos';
+      heroSub.innerHTML = 'você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Seguindo <u>o Método</u> à risca, isso pode acontecer aos ' + Math.round(calc.idadeBateMeta) + ' anos';
     } else if (calc.diferencaAnos <= -0.5) {
-      resultSummary.textContent = 'Veja o que o Método Travessia projeta pra você, se seguido com consistência.';
-      heroLabel.innerHTML = '<strong>Se você seguir o Método Travessia com consistência</strong>, sua aposentadoria pode acontecer aos';
+      resultSummary.innerHTML = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. No ritmo de hoje, sem estratégia, esse prazo está em risco real. Veja o que muda se você seguir <u>o Método Travessia</u> com consistência.';
+      heroLabel.innerHTML = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, sua aposentadoria pode acontecer aos';
       heroValor.textContent = Math.round(calc.idadeBateMeta) + ' anos';
-      heroSub.textContent = 'Sem um método estruturado, é provável que você não consiga se aposentar nem aos ' + EXPECTATIVA_VIDA + ' anos.';
+      heroSub.innerHTML = 'Sem uma estratégia estruturada a partir de agora, o risco é real: chegar aos ' + EXPECTATIVA_VIDA + ' anos sem ter se aposentado de verdade. A boa notícia é que dá pra virar esse jogo, é isso que <u>o Método Travessia</u> estrutura pra você.';
     } else {
-      resultSummary.textContent = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Veja o que o Método Travessia projeta pra você, se seguido com consistência.';
-      heroLabel.innerHTML = '<strong>Se você seguir o Método Travessia com consistência</strong>, bate sua meta bem na idade que pediu:';
+      resultSummary.innerHTML = 'Você pediu pra se aposentar aos ' + calc.idadeAposentar + ' anos. Veja o que <u>o Método Travessia</u> projeta pra você, se seguido com consistência.';
+      heroLabel.innerHTML = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, bate sua meta bem na idade que pediu:';
       heroValor.textContent = Math.round(calc.idadeBateMeta) + ' anos';
       heroSub.textContent = 'isso só vale enquanto a estratégia for seguida à risca, mês a mês';
     }
@@ -1053,14 +1053,17 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 
     let nota;
     if (calc.idadeBateMeta === null) {
-      nota = 'Mesmo <strong>se você seguir</strong> o Método Travessia, no seu ritmo atual essa meta não seria alcançada dentro da expectativa de vida considerada.';
+      nota = 'Isso não é <u>o Método Travessia</u> falhando: é essa meta específica pedindo mais do que a régua padrão de 20% da renda. <strong>O ajuste existe</strong>, guardar mais, investir melhor, ou recalibrar o prazo, e é isso que a orientação personalizada ajuda a calibrar.';
     } else if (calc.diferencaAnos >= 0.5) {
       const n = Math.round(calc.diferencaAnos);
-      nota = '<strong>Se você seguir</strong> o Método Travessia com consistência, você pode chegar lá ' + n + ' ' + anoTexto(n) + ' antes do que imaginava. Isso não é automático, é o resultado de aplicar a estratégia mês a mês.';
+      nota = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, você pode chegar lá ' + n + ' ' + anoTexto(n) + ' antes do que imaginava. Isso não é automático, é o resultado de aplicar a estratégia mês a mês.';
     } else if (calc.diferencaAnos <= -0.5) {
-      nota = '<strong>Se você seguir</strong> o Método Travessia com consistência, essa é a idade real que a estratégia entrega no seu ritmo atual. Isso não é automático, é o resultado de aplicar a estratégia mês a mês, e dá pra mudar essa trajetória com os ajustes certos.';
+      const abertura = calc.patrimonioAtual <= 0
+        ? 'Hoje você não tem nada guardado.'
+        : 'O que você tem guardado hoje é muito pouco pra chegar na sua meta.';
+      nota = abertura + ' Esse atraso é o risco real que você está correndo, não é sobre "ainda dá tempo", é sobre começar a agir agora. <strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, guardando e investindo o percentual certo da sua renda todo mês, essa é a idade que a estratégia já consegue entregar, e dá pra encurtar essa distância ainda mais com os ajustes certos.';
     } else {
-      nota = 'Seu ritmo atual já está bem alinhado com essa meta, <strong>desde que a estratégia seja mantida</strong> mês a mês.';
+      nota = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, guardando o percentual certo da sua renda todo mês, essa é a idade que a estratégia entrega: bem na meta que você pediu. Isso não é automático nem reflete seu ritmo de hoje, é o resultado de aplicar a estratégia mês a mês.';
     }
 
     const cardsHtml = cards.map(function (c) {
