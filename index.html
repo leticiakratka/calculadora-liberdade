@@ -680,7 +680,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       <div class="hero-antecipa-label" id="hero-label"></div>
       <div class="hero-antecipa-value" id="hero-valor"></div>
       <div class="hero-antecipa-sub" id="hero-sub"></div>
-      <div class="hero-antecipa-disclaimer">⚠️ Essa idade só acontece se você seguir uma estratégia estruturada de aporte e investimento, com consistência. Sem isso, os números mudam completamente.</div>
+      <div class="hero-antecipa-disclaimer">⚠️ Essa idade só acontece se você seguir uma estratégia estruturada de aporte e investimento, que vamos te ensinar, com consistência. Sem isso, os números mudam completamente.</div>
     </div>
 
     <div class="explicacao-resultado" id="explicacao-resultado"></div>
@@ -1056,14 +1056,20 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       nota = 'Isso não é <u>o Método Travessia</u> falhando: é essa meta específica pedindo mais do que a régua padrão de 20% da renda. <strong>O ajuste existe</strong>, guardar mais, investir melhor, ou recalibrar o prazo, e é isso que a orientação personalizada ajuda a calibrar.';
     } else if (calc.diferencaAnos >= 0.5) {
       const n = Math.round(calc.diferencaAnos);
-      nota = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, você pode chegar lá ' + n + ' ' + anoTexto(n) + ' antes do que imaginava. Isso não é automático, é o resultado de aplicar a estratégia mês a mês.';
+      const abertura = calc.patrimonioAtual <= 0
+        ? 'Hoje você não tem nada guardado, e mesmo assim, '
+        : '';
+      nota = abertura + '<strong>se você seguir <u>o Método Travessia</u> com consistência</strong>, você pode chegar lá ' + n + ' ' + anoTexto(n) + ' antes do que imaginava. Isso não é automático, é o resultado de aplicar a estratégia mês a mês.';
     } else if (calc.diferencaAnos <= -0.5) {
       const abertura = calc.patrimonioAtual <= 0
         ? 'Hoje você não tem nada guardado.'
         : 'O que você tem guardado hoje é muito pouco pra chegar na sua meta.';
       nota = abertura + ' Esse atraso é o risco real que você está correndo, não é sobre "ainda dá tempo", é sobre começar a agir agora. <strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, guardando e investindo o percentual certo da sua renda todo mês, essa é a idade que a estratégia já consegue entregar, e dá pra encurtar essa distância ainda mais com os ajustes certos.';
     } else {
-      nota = '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, guardando o percentual certo da sua renda todo mês, essa é a idade que a estratégia entrega: bem na meta que você pediu. Isso não é automático nem reflete seu ritmo de hoje, é o resultado de aplicar a estratégia mês a mês.';
+      const abertura = calc.patrimonioAtual <= 0
+        ? 'Hoje você não tem nada guardado. '
+        : '';
+      nota = abertura + '<strong>Se você seguir <u>o Método Travessia</u> com consistência</strong>, guardando o percentual certo da sua renda todo mês, essa é a idade que a estratégia entrega: bem na meta que você pediu. Isso não é automático nem reflete seu ritmo de hoje, é o resultado de aplicar a estratégia mês a mês.';
     }
 
     const cardsHtml = cards.map(function (c) {
